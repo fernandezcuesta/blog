@@ -4,4 +4,4 @@ __pycache__/
 *.pid
 *.tgz
 pelican-plugins/
-*.*~
+*~
