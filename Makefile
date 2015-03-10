@@ -29,6 +29,10 @@ DROPBOX_DIR=~/Dropbox/Public/
 
 GITHUB_PAGES_BRANCH=master
 
+DATE := $(shell date +'%Y-%m-%d %H:%M:%S')
+SLUG := $(shell date +'%Y-%m-%d')-$(shell echo '${NAME}' | sed -e 's/[^[:alnum:]]/-/g' | tr -s '-' | tr A-Z a-z)
+EXT ?= md
+
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
 	PELICANOPTS += -D
@@ -42,8 +46,8 @@ help:
 	@echo '   make clean                       remove the generated files         '
 	@echo '   make regenerate                  regenerate files upon modification '
 	@echo '   make publish                     generate using production settings '
-	@echo '   make serve [PORT=8000]           serve site at http://localhost:8000'
-	@echo '   make devserver [PORT=8000]       start/restart develop_server.sh    '
+	@echo '   make serve [PORT=4000]           serve site at http://localhost:8000'
+	@echo '   make devserver [PORT=4000]       start/restart develop_server.sh    '
 	@echo '   make stopserver                  stop local server                  '
 	@echo '   make ssh_upload                  upload the web site via SSH        '
 	@echo '   make rsync_upload                upload the web site via rsync+ssh  '
@@ -52,9 +56,32 @@ help:
 	@echo '   make s3_upload                   upload the web site via S3         '
 	@echo '   make cf_upload                   upload the web site via Cloud Files'
 	@echo '   make github                      upload the web site via gh-pages   '
+	@echo '   make newpost [NAME]              create new post                    '
+	@echo '   make editpost [NAME]             edit an already created post       '
 	@echo '                                                                       '
 	@echo 'Set the DEBUG variable to 1 to enable debugging, e.g. make DEBUG=1 html'
 	@echo '                                                                       '
+
+newpost:
+ifdef NAME
+	echo "Title: $(NAME)" >  $(INPUTDIR)/$(SLUG).$(EXT)
+	echo "Date: $(DATE)" >> $(INPUTDIR)/$(SLUG).$(EXT)
+	echo ""              >> $(INPUTDIR)/$(SLUG).$(EXT)
+	echo ""              >> $(INPUTDIR)/$(SLUG).$(EXT)
+	${EDITOR} ${INPUTDIR}/${SLUG}.${EXT}
+else
+	@echo 'Variable NAME is not defined.'
+	@echo 'Do make newpost NAME='"'"'Post Name'"'"
+endif
+
+editpost:
+ifdef NAME
+	${EDITOR} ${INPUTDIR}/${SLUG}.${EXT}
+else
+	@echo 'Variable NAME is not defined.'
+	@echo 'Do make editpost NAME='"'"'Post Name'"'"
+endif
+
 
 html:
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
