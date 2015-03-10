@@ -1,0 +1,152 @@
+{% macro ephemeral_nav_link(what, where, selected=False) -%}
+<li class="ephemeral{%- if selected %} selected{% endif %}"><a href="{{ SITEURL }}/{{ where }}">{{what}}</a></li>
+{%- endmacro -%}
+
+<!DOCTYPE html>
+<html lang={{ DEFAULT_LANG }}>
+<head>
+    <title>{% block title %}{{ SITENAME }}{% if title %} &middot; ${ title | escape }{% endif %}{% endblock %}</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ SITEURL }}/theme/images/favicon.ico" />
+
+    {% block canonical_rel %}{% endblock %}
+    {% block meta %}
+       <meta name="author" content="{{ AUTHOR }}" />
+    {% endblock %}
+
+    {% if FEED_ALL_ATOM -%}
+    <link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate" title="{{ SITENAME }} Atom Feed" />
+    {% endif %}
+    {% if FEED_ALL_RSS %}
+    <link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
+    {% endif %}
+
+    {% if 'tipue_search' in PLUGINS %}
+        <link href="{{ SITEURL}}/theme/tipuesearch/tipuesearch.css" rel="stylesheet">
+    {% endif %}
+
+     <!-- Bootstrap and custom style -->
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/screen.css" type="text/css" />
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments.css" type="text/css" />
+<!--
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/font-awesome.min.css" type="text/css"> 
+-->
+
+
+    {% if GOOGLE_ANALYTICS %}
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+    try {
+        var pageTracker = _gat._getTracker("{{GOOGLE_ANALYTICS}}");
+        pageTracker._trackPageview();
+        } catch(err) {}</script>
+    {% endif %}
+
+</head>
+<body>
+
+<nav class="navbar navbar-static-top" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a href="{{ SITEURL }}/" class="navbar-brand">
+            {% if SITELOGO %}<img src="{{ SITEURL }}/{{ SITELOGO }}" width="{{ SITELOGO_SIZE }}"/> {% endif %}
+        </a>
+    </div>
+    <div class="navbar-collapse collapse">
+         <div class="row" id="header">
+             <div class="col-xs-5 col-md-6 col-lg-6 header_box">
+                <ul>
+                {%- if SITESUBTITLE %}
+                  <li class="headsubtitle">{{ SITESUBTITLE }}</li>
+                {%- endif %}
+                {% if SITENAME -%}
+                  <li>
+                    <a href="{{ SITEURL }}"><img class="headtitle" src="{{ SITEURL }}/theme/images/title.png" alt="sys$notes"/></a>
+                  </li>
+                {%- endif %}
+                </ul>
+             </div>
+
+             <div class="col-xs-6 col-md-5 col-lg-5 header_controls">
+                <ul id="nav">
+                    <li {%- if output_file == "index.html" %} class="selected"{% endif %}><a href="{{ SITEURL }}">Home</a></li>
+                    {% if DISPLAY_PAGES_ON_MENU -%}
+                     {% for page in PAGES -%}
+                      <li {%- if output_file == page.url %} class="selected"{% endif %}><a href="{{ SITEURL }}/{{ page.url }}">{{ page.title }}</a></li>
+                     {% endfor -%}
+                    {% endif -%} 
+
+                    <li {%- if output_file == "archives.html" %} class="selected"{% endif %}><a href="{{ SITEURL }}/archives.html">Archives</a></li>
+                    <li><a href="http://about.me/fernandez.cuesta">About</a></li>
+                    {%- block ephemeral_nav %}{%- endblock %}
+                </ul>
+             </div>
+         </div>
+
+        {% if 'tipue_search' in PLUGINS %}
+        <div class="row navbar-header navbar-right">
+          <span>
+            <form class="navbar-search" action="/search">
+              <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input" required>
+            </form>
+         </span>
+        </div>
+        {% endif %}
+    </div>
+    <!-- /.navbar-collapse -->
+</nav> <!-- /.navbar -->
+
+
+<div class="container{% if BOOTSTRAP_FLUID %}-fluid{% endif %}">
+         <!-- OLD NAVIGATOR -->
+    <div id="content">
+         <div class="row">
+             <div class="col-xs-12">
+                {% block breadcrumbs %}{% endblock %}
+             </div>
+         </div>
+         {% block content %}{% endblock %}
+   
+         <div class="clear"></div>
+   </div>
+   <div class="row" id="footer">
+       <div class="col-lg-12 license">
+          <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+           <img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+          </a>
+          <div>
+             <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+             <strong>sys$notes</strong>
+             </span> is licensed under a
+             <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+             Creative Commons Attribution 4.0 International License
+             </a>
+          </div>
+       </div>
+    <p>Powered by <a href="http://getpelican.com">Pelican</a>&middot;
+       Theme based on <a href="https://github.com/wrl/pelican-mockingbird">Mockingbird by Nevan Scott</a>
+    </p>
+   </div>
+
+   <div class="clear"></div>
+</div>
+<!-- Scripts -->
+<script src="{{ SITEURL }}/theme/js/jquery.min.js"></script>
+<script src="{{ SITEURL }}/theme/js/bootstrap.min.js"></script>
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="{{ SITEURL }}/theme/js/respond.min.js"></script>
+
+{% include 'analytics.html' %}
+</body>
+</html>

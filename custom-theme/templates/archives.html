@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ SITENAME }} &middot; Archives{% endblock %}
+{% block content %}
+
+    <div class="row post">
+        <div class="col-xs-3 col-md-3 col-lg-2"></div>
+        <div class="col-xs-9 col-md-9 col-lg-10">
+            <h1 style="text-align: right; margin-right:3em;">Archives</h1>
+        </div>
+    </div>
+    <div class="row">
+        {%- if dates %}
+			{#- hold on to your butts! #}
+
+         {% set month = None -%}
+         {%- for article in dates -%}
+            {% set cmonth = article.date.date().replace(day=1) %}
+            {%- if not month -%}
+            {%   set month = cmonth %}
+            <div class="archives izquierda col-xs-3 col-md-3 col-lg-2">
+                <div class="date">
+                 <div class="dateday">{{ article.date.strftime("%Y") }}</div>
+                 <div class="datemonth">{{ article.date.strftime("%b") }}</div>
+                </div>
+            </div>
+            <div class="post archives col-xs-9 col-md-9 col-lg-10">
+                <ul>
+            {%- elif cmonth < month -%}
+            {%   set month = cmonth %}
+                </ul>
+                <br />
+            </div>
+            <div class="archives izquierda col-xs-3 col-md-3 col-lg-2">
+                <div class="date">
+                 <div class="dateday">{{ article.date.strftime("%Y") }}</div>
+                 <div class="datemonth">{{ article.date.strftime("%b") }}</div>
+                </div>
+            </div>
+            <div class="post archives col-xs-9 col-md-9 col-lg-10">
+                <ul>
+            {%- endif %}
+
+                    <li>{{ article.date.strftime("%d") }}{{ article.date.strftime("%b") }}: <a href="{{ SITEURL }}/{{ article.url }}">{{ article.title | truncate(70) }}</a></li>
+         {%- endfor %}
+                </ul>
+                <br />
+            </div>
+        {% else %}
+
+            <div class="post text pinned">
+                <h2>No Posts :-(</h2>
+                <p>There aren't any posts in the timeframe specified.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,6 @@
+fernandezcuesta.github.io/
+cache/
+__pycache__/
+*.pid
+*.tgz
+pelican-plugins/
