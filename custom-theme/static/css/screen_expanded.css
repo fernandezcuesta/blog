@@ -243,7 +243,7 @@ code{
 .highlight{
    padding-left: 1em;
    border-radius: 10px 0px 10px 0px;
-   background-color: #rgba(220,220,220,.65);
+   background-color: rgba(220,220,220,.65);
    max-width: 90%;
    font-family: monospace;
 }
@@ -271,6 +271,7 @@ code{
 
 .highlighttable .highlight{
     max-width:100%;
+    background: none;
 }
 
 .highlighttable pre {
