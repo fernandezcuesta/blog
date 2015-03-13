@@ -1,4 +1,4 @@
-Title: Mirror sharing with wemux
+Title: Mirror sharing with tmux/wemux
 Published: true
 Location: Santander, ES
 Tags: iptables, linux, networking, agile
@@ -9,8 +9,8 @@ activities are to be audited real-time.
 The following 2 components are in place:
 
 - [**Wemux**](https://github.com/zolrath/wemux) and
-[**tmux**](http://tmux.sourceforge.net/), where the former makes the magic of
-easily making the guests read-only.
+[**tmux**](http://tmux.sourceforge.net/), where the former acts as a wrapper
+for `tmux`.
 - **OpenSSH** configured in such a way that guests are directly attached to an
 existing `wemux` session (or disconnected otherwise).
 
@@ -31,21 +31,21 @@ default_client_mode="mirror"    # all clients are attached read-only
 
 Create a guest user and set OpenSSH up as follows:
 
-```bash
-# Ensure only public key authentication is allowed
-$ sudo sed -E -i.bak 's/^#?(PasswordAuthentication|ChallengeResponseAuthentication).*$/\1 no/' /etc/ssh/sshd_config
+    #!/bin/bash
+    # Ensure only public key authentication is allowed
+    $ sudo sed -E -i.bak 's/^#?(PasswordAuthentication|ChallengeResponseAuthentication).*$/\1 no/' /etc/ssh/sshd_config
 
-# Create new guest user
-$ sudo useradd -m guest
-$ echo -e 'guestpassword\nguestpassword' | sudo passwd guest
+    # Create new guest user
+    $ sudo useradd -m guest
+    $ echo -e 'guestpassword\nguestpassword' | sudo passwd guest
 
-# Create ssh key for guest
-$ su - guest
-$ mkdir .ssh
-$ ssh-keygen -N MY_PASSPHRASE -f .ssh/guest-ssh-key
-$ echo 'command="wemux",no-port-forwarding,no-x11-forwarding,no-agent-forwarding ' > .ssh/authorized_keys 
-$ cat .ssh/guest-ssh-key.pub >> .ssh/authorized_keys
-```
+    # Create ssh key for guest
+    $ su - guest
+    $ mkdir .ssh
+    $ ssh-keygen -N MY_PASSPHRASE -f .ssh/guest-ssh-key
+    $ echo 'command="wemux",no-port-forwarding,no-x11-forwarding,no-agent-forwarding ' > .ssh/authorized_keys 
+    $ cat .ssh/guest-ssh-key.pub >> .ssh/authorized_keys
+
 
 Now share keys to the other party over a secure channel.
 
@@ -67,3 +67,18 @@ Removing the keys is even easier with:
 ```bash
 gh-auth remove --users=GITHUB_USER_ID
 ```
+<br/>
+##<u>UPDATE:</u> When wemux is not an option
+
+If `wemux` is not an option, we can still reach the same results only by using
+`tmux` and OpenSSH.
+
+What we need from the host is to open a tmux session with a specific name,
+for example:
+
+```bash
+tmux new-session -s shared
+```
+
+On **line 13** above, replace `command="wemux"` by
+`command="tmux attach-session -t session -r"` and you're done!.

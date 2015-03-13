@@ -233,13 +233,21 @@ blockquote {
 	margin: 0 90px;
 	}
 
+code{
+	background-color: rgba(220,220,220,.65);
+	font-family: monospace;
+	padding: 3px;
+	border-radius: 10px 0;
+}
+
 .highlight{
    padding-left: 1em;
    border-radius: 10px 0px 10px 0px;
-   background-color: #EEE;
+   background-color: #rgba(220,220,220,.65);
    max-width: 90%;
    font-family: monospace;
 }
+
 
 .highlight pre{
    word-wrap: break-word;  
@@ -252,14 +260,13 @@ blockquote {
    font-size: 100%;
    font-family: Monospace;
    line-height: 1.1em;
-/*  border: 2px solid #eee;*/
 	}
 
 
 .highlighttable {
-   background-color: #eee;
-   border-top: 10px solid #eee;
-   border-bottom: 10px solid #eee;
+   background-color: rgba(220,220,220,.65);
+   border-top: 10px solid rgba(220,220,220,0);
+   border-bottom: 10px solid rgba(220,220,220,0);
 }
 
 .highlighttable .highlight{

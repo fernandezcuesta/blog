@@ -1,4 +1,4 @@
-Title: OpenVMS logical disk
+Title: Logical disks in OpenVMS
 Published: true
 Location: Santander, ES
 Tags: OpenVMS
