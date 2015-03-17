@@ -37,7 +37,6 @@ df_d = pd.DataFrame({'sample_nr': [0, 1, 2, 3],
                      'val2': [8, 8, 7, 7],
                      'val3': [4, 4, 6, 6]})
 df_d = df_d.set_index('sample_nr')
-```
 
 
     df_a:                         df_b:
@@ -56,7 +55,7 @@ df_d = df_d.set_index('sample_nr')
     11            3     2    1             8     4
     12            2     3    2             7     6
     13            1     4    3             7     6
-
+```
 
 
 The result of glueing everything together is:

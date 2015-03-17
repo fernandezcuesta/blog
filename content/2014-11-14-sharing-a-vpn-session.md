@@ -34,7 +34,7 @@ The <u>**simplest option**</u> is taking advantage of OpenSSH's ability to forwa
 incoming connections into the SSH tunnel:
 
 ```bash
-ssh user@10.200.0.1 -L 1.1.1.1:50000:localhost:22
+$ ssh user@10.200.0.1 -L 1.1.1.1:50000:localhost:22
 ```
 
 And let the other person connect to 1.1.1.1:50000.
@@ -46,51 +46,51 @@ Having a look at iptables flowchart, we may figure out what we need to set it
 up by following the upper side of the
 [chart](http://www.fclose.com/816/port-forwarding-using-iptables/).
 
-```
-PACKET IN
-    |
-PREROUTING--[routing]-->--FORWARD-->--POSTROUTING-->--OUT
- - nat (dst)   |           - filter      - nat (src)
-               |                            |
-               |                            |
-              INPUT                       OUTPUT
-              - filter                    - nat (dst)
-               |                          - filter
-               |                            |
-               `----->-----[app]----->------'
-```
+    #!text
+    PACKET IN
+        |
+    PREROUTING--[routing]-->--FORWARD-->--POSTROUTING-->--OUT
+     - nat (dst)   |           - filter      - nat (src)
+                   |                            |
+                   |                            |
+                  INPUT                       OUTPUT
+                  - filter                    - nat (dst)
+                   |                          - filter
+                   |                            |
+                   `----->-----[app]----->------'
+
 
 - PREROUTING rule on NAT table to translate incoming connections on port 50000
 to the remote system port 22 (SSH).
 
         :::bash
-        iptables -t nat -A PREROUTING -p tcp --dport 50000 -j DNAT --to \
-         10.200.0.1:22 -m comment --comment 'Redirect in 50000 to 10.200.0.1:22'
+        $ iptables -t nat -A PREROUTING -p tcp --dport 50000 -j DNAT --to \
+        > 10.200.0.1:22 -m comment --comment 'Redirect in 50000 to 10.200.0.1:22'
 
 - FORWARD rule to allow this traffic flow between interfaces (eth0 and tun0).
 
         :::bash
-        iptables -I FORWARD -p tcp --dst 10.200.0.1 --dport 22 -j ACCEPT
-        iptables -I FORWARD -p tcp --src 10.200.0.1 --sport 22 -j ACCEPT
+        $ iptables -I FORWARD -p tcp --dst 10.200.0.1 --dport 22 -j ACCEPT
+        $ iptables -I FORWARD -p tcp --src 10.200.0.1 --sport 22 -j ACCEPT
 
     This also needs the kernel to allow IP forwarding, so we must check:
 
         :::bash
-        if [ $(cat /proc/sys/net/ipv4/ip_forward) = 0 ]; then \
-        sudo sysctl -w net.ipv4.ip_forward=1 ;fi
+        $ if [ $(cat /proc/sys/net/ipv4/ip_forward) = 0 ]; then \
+        > sudo sysctl -w net.ipv4.ip_forward=1 ;fi
 
 - POSTROUTING rule on NAT table to masquerade the source address of outgoing
 traffic.
 
         :::bash
-        iptables -t nat -A POSTROUTING -d 10.200.0.1 -p tcp --dport 22 \
-        -j SNAT --to-source 10.200.100.5
+        $ iptables -t nat -A POSTROUTING -d 10.200.0.1 -p tcp --dport 22 \
+        > -j SNAT --to-source 10.200.100.5
 
 With these rules in place the other person can simply access the remote system
 with:
 
 ```bash
-ssh username@1.1.1.1 -p 50000
+$ ssh username@1.1.1.1 -p 50000
 ```
 The overall process can be automated with a bash script like this:
 

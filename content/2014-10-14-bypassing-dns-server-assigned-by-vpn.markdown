@@ -21,8 +21,8 @@ Fast an easy way to do this with iptables: redirect all DNS queries (on port
 For example:
 
 ```bash
-iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to 8.8.8.8:53
-iptables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to 8.8.8.8:53
+$ iptables -t nat -A OUTPUT -p udp --dport 53 -j DNAT --to 8.8.8.8:53
+$ iptables -t nat -A OUTPUT -p tcp --dport 53 -j DNAT --to 8.8.8.8:53
 ```
 
 Now, all DNS queries will be redirected to our preferred DNS, regardless of

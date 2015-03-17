@@ -94,6 +94,9 @@ h1 {
 
 h1:hover {
    box-shadow:0px 10px 0px 0px #40a070;
+   -webkit-transition: box-shadow 0.3s ease-out; 
+   -moz-transition: box-shadow 0.3s ease-out; 
+   -o-transition: box-shadow 0.3s ease-out; 
    transition: box-shadow 0.3s ease-out; 
 }
 
@@ -118,7 +121,6 @@ blockquote {
    width: 100px;
    height: 100px;
    border-radius: 50%;
-   transition-duration: 1s;
    font-size: 1.5em;
    line-height: 1em;
    margin: -1em 20px 0 0;
@@ -129,15 +131,14 @@ blockquote {
 
 .date:hover{
    background-color:#40a070;
+   -webkit-transition-duration: 1s;
+   -moz-transition-duration: 1s;
+   -o-transition-duration: 1s;
+   transition-duration: 1s;
+   -webkit-transform:skew(20deg, -16deg);
+   -moz-transform:skew(20deg, -16deg);
+   -o-transform:skew(20deg, -16deg);
    transform:skew(20deg, -16deg);
-}
-.data:hover{
-   background-color:#40a070;
-   -webkit-transform:rotate3d(0, 1, 0, -360deg);
-   -moz-transform:rotate3d(0, 1, 0, -360deg);
-   -ms-transform:rotate3d(0, 1, 0, -360deg);
-   -o-transform:rotate3d(0, 1, 0, -360deg);
-   transform:rotate3d(0, 1, 0, -360deg)
 }
 
 .dateday{
@@ -262,34 +263,37 @@ code{
    line-height: 1.1em;
 	}
 
-
 .highlighttable {
    background-color: rgba(220,220,220,.65);
-   border-top: 10px solid rgba(220,220,220,0);
-   border-bottom: 10px solid rgba(220,220,220,0);
+   border: 0px;
+   border-right: 10px solid rgba(220,220,220,.42);
+   padding: 0px .5em;
    display: block;
    overflow-x: auto;
+   overflow-y: hidden;
+}
+
+.highlighttable pre{
+   white-space: pre;
+   overflow: hidden;
+}
+
+.highlight_inline_table pre {
+    padding: 0px .5em;
+    overflow: hidden;
 }
 
 .highlighttable .highlight{
     max-width:100%;
     background: none;
+    padding-left: 0px;
 }
-
-.highlighttable pre {
-	border: 0px;
-    padding: 0px .5em;
-	}
 
 .linenos {
    color: #40a070;
 }
 
-/*
-highlighttable {
-max-width: 80%;
-}
-*/
+
 form.inline_edit {
 	clear: both;
 	margin: 4.5em 0;
@@ -515,6 +519,9 @@ form.inline_edit {
    height: 5px;
    background-color: #40a070;
    content: "";
+   -moz-transition: width 0.3s;
+   -webkit-transition: width 0.3s;
+   -o-transition: width 0.3s;
    transition: width 0.3s;
 }
 
@@ -592,7 +599,7 @@ form.inline_edit {
    .header_box { display:none; }
    .header_controls { width: 100%;}
    .navbar-collapse{box-shadow: 0px 10px 0px rgba(64, 112, 60, 0.4) inset;}
-   .date {background-color:#40a070; transform:skew(20deg, -16deg);width:70px;height:70px;}
+   .date {background-color:#40a070;transform:skew(20deg, -16deg);width:70px;height:70px;}
    .post_content{width:98%;}
    .highlight{max-width:100%;padding-left:1px;}
 /*   .highlighttable{float:right;} */
@@ -611,7 +618,12 @@ form.inline_edit {
     height: 5px;
 }
 
+/* Text selection */
+
 ::-moz-selection {
+    background: #abced4;
+}
+::-webkit-selection {
     background: #abced4;
 }
 ::selection {
@@ -619,8 +631,21 @@ form.inline_edit {
 }
 
 
-/* Let's get this party started */
+/* Scrollbars */
+
+::-moz-scrollbar {
+    width: 8px;
+    height: 8px;
+}
 ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-o-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::scrollbar {
     width: 8px;
     height: 8px;
 }
@@ -628,16 +653,45 @@ form.inline_edit {
 /* Track */
 ::-webkit-scrollbar-track {
     -webkit-border-radius: 10px 1px;
+}
+::-moz-scrollbar-track {
+    -moz-border-radius: 10px 1px;
+}
+::-o-scrollbar-track {
+    -o-border-radius: 10px 1px;
+}
+::scrollbar-track {
     border-radius: 10px 1px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 10px 1px;
     border-radius: 10px 1px;
     background: #40a070; 
-
 }
+::-moz-scrollbar-thumb {
+    border-radius: 10px 1px;
+    background: #40a070; 
+}
+::-o-scrollbar-thumb {
+    border-radius: 10px 1px;
+    background: #40a070; 
+}
+::scrollbar-thumb {
+    border-radius: 10px 1px;
+    background: #40a070; 
+}
+
+
 ::-webkit-scrollbar-thumb:window-inactive {
+	background: #777; 
+}
+::-moz-scrollbar-thumb:window-inactive {
+	background: #777; 
+}
+::-o-scrollbar-thumb:window-inactive {
+	background: #777; 
+}
+::scrollbar-thumb:window-inactive {
 	background: #777; 
 }
