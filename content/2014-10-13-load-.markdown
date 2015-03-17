@@ -1,6 +1,5 @@
 Title: load ""
-published: true
-googlewebfonts: Bree+Serif
+Published: True
 tags: 
 - misc
 

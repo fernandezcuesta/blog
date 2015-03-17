@@ -1,5 +1,5 @@
 Title: Mirror sharing with tmux/wemux
-Published: true
+Published: True
 Location: Santander, ES
 Tags: iptables, linux, networking, agile
 

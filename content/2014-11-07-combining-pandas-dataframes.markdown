@@ -1,5 +1,5 @@
 Title: Combining pandas dataframes
-Published: true
+Published: True
 Tags: python, pandas, code
 comments: true
 

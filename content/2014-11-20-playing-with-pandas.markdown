@@ -1,5 +1,5 @@
 Title: Playing with pandas
-Published: true
+Published: True
 Location: Santander, ES
 Googlewebfonts: "Bree+Serif"
 Tags: pandas, python

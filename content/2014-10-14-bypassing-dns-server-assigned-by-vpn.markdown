@@ -1,9 +1,9 @@
 Title: Bypassing DNS assigned by VPN
-Published: true
+Published: True
 Location: Santander, ES
 Googlewebfonts: "Bree+Serif"
 Tags: iptables, networking, security, linux
-Category: 
+Categories: 
 
 With some VPN clients like Cisco Anyconnect, the DNS records can be
 automatically assigned by the VPN server during negotiation of the secure
