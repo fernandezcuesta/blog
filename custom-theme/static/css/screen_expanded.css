@@ -267,6 +267,8 @@ code{
    background-color: rgba(220,220,220,.65);
    border-top: 10px solid rgba(220,220,220,0);
    border-bottom: 10px solid rgba(220,220,220,0);
+   display: block;
+   overflow-x: auto;
 }
 
 .highlighttable .highlight{
@@ -593,7 +595,7 @@ form.inline_edit {
    .date {background-color:#40a070; transform:skew(20deg, -16deg);width:70px;height:70px;}
    .post_content{width:98%;}
    .highlight{max-width:100%;padding-left:1px;}
-   .highlighttable{float:right;}
+/*   .highlighttable{float:right;} */
 /*   .tags{float: right;text-align:right;transform: rotate(-17deg);}*/
    .derecha{padding-left: 0px;}
    .izquierda{padding-left:1px; padding-right:5px;}
@@ -616,3 +618,26 @@ form.inline_edit {
   background: #abced4;
 }
 
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 10px 1px;
+    border-radius: 10px 1px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px 1px;
+    border-radius: 10px 1px;
+    background: #40a070; 
+
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #777; 
+}
