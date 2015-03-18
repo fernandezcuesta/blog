@@ -1,6 +1,6 @@
         <div class="row post">
             {%- if not articles_page or first_article_of_day %}
-            <div class="izquierda col-xs-3 col-md-3 col-lg-2">
+            <div class="izquierda col-xs-2 col-md-2 col-lg-2">
              <div class="date">
                  {% if article.date.strftime('%y') < CURRDATE.strftime('%y') %}
                  <div class="dateday">{{ article.date.strftime("%d %b") }}</div>
@@ -20,7 +20,7 @@
              {%- endif %}
             </div>
             {%- endif %}
-            <div class="derecha{% if article.pinned %} pinned{% endif %} col-xs-9 col-md-9 col-lg-10">
+            <div class="derecha{% if article.pinned %} pinned{% endif %} col-xs-10 col-md-10 col-lg-10">
                 {% if article['title'] -%}
                 <h1 class="title">
                     <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Permanent Link to &quot;{{ article.title }}&quot;">{{ article.title }}</a>

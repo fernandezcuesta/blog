@@ -1,6 +1,6 @@
         <div class="row post">
             {%- if not articles_page or first_article_of_day %}
-            <div class="izquierda col-xs-3 col-md-3 col-lg-2">
+            <div class="izquierda col-xs-2 col-md-2 col-lg-2">
              <div class="date">
                  {% if article.date.strftime('%y') < CURRDATE.strftime('%y') %}
                  <div class="dateday">{{ article.date.strftime("%d %b") }}</div>
@@ -20,7 +20,7 @@
              {%- endif %}
             </div>
             {%- endif %}
-            <div class="derecha{% if article.pinned %} pinned{% endif %} col-xs-9 col-md-9 col-lg-10">
+            <div class="derecha{% if article.pinned %} pinned{% endif %} col-xs-10 col-md-10 col-lg-10">
                 {% if article['title'] -%}
                 <h1 class="title">
                     <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Read full article: &quot;{{ article.title }}&quot;">{{ article.title }}</a>
@@ -36,13 +36,13 @@
         {% if DISQUS_SITENAME %}
         <div class="comments">
         <div class="row post">
-            <div class="col-xs-10 comments_content comments_header">
+            <div class="col-xs-10 col-md-10 col-lg-10 comments_content comments_header">
                 <h2>Leave your comments:</h2>
             </div>
-            <div class="col-xs-2 comments_corner"></div>
+            <div class="col-xs-2 col-md-2 col-lg-2 comments_corner"></div>
         </div>
         <div class="row flex-row">
-            <div class="col-xs-10 comments_content">
+            <div class="col-xs-10 col-md-10 col-lg-10 comments_content">
                 <div id="disqus_thread">
                     <script type="text/javascript">
                        var disqus_identifier = "{{ article.url }}";

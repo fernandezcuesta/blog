@@ -599,13 +599,10 @@ form.inline_edit {
    .header_box { display:none; }
    .header_controls { width: 100%;}
    .navbar-collapse{box-shadow: 0px 10px 0px rgba(64, 112, 60, 0.4) inset;}
-   .date {background-color:#40a070;transform:skew(20deg, -16deg);width:70px;height:70px;}
+   .izquierda{padding-left:1px; padding-right:5px;font-size:2.3vw;line-height:3vw;}
+   .date {background-color:#40a070;transform:skew(20deg, -16deg);width:12vw;height:12vw;font-size:3vw;}
    .post_content{width:98%;}
    .highlight{max-width:100%;padding-left:1px;}
-/*   .highlighttable{float:right;} */
-/*   .tags{float: right;text-align:right;transform: rotate(-17deg);}*/
-   .derecha{padding-left: 0px;}
-   .izquierda{padding-left:1px; padding-right:5px;}
    
 }
 
