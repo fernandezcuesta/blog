@@ -171,6 +171,7 @@ blockquote {
 
 .post.archives {
 	margin-bottom: 2.5em;
+    border-top: 8px dotted rgba(171, 205, 228, 0.65);
 	}
 
 .archives.izquierda{
@@ -387,9 +388,20 @@ form.inline_edit {
 #content {
    background-color: #fafafa; 
    background-image: 
-   linear-gradient(90deg, transparent 15%, #abced4 15%, #abced4 15.5%, transparent 15.5%),
+   -webkit-linear-gradient(left, transparent 15%, #abced4 15.1%, #abced4 15.4%, transparent 15.5%),
+   -webkit-linear-gradient(#dadada .1em, transparent .1em);
+   background-image: 
+   -o-linear-gradient(right, transparent 15%, #abced4 15%, #abced4 15.5%, transparent 15.5%),
+   -o-linear-gradient(#dadada .1em, transparent .1em);
+   background-image: 
+   -moz-linear-gradient(right, transparent 15%, #abced4 15%, #abced4 15.5%, transparent 15.5%),
+   -moz-linear-gradient(#dadada .1em, transparent .1em);
+   background-image: 
+   linear-gradient(to right, transparent 15%, #abced4 15%, #abced4 15.5%, transparent 15.5%),
    linear-gradient(#dadada .1em, transparent .1em);
    background-size: 100% 1.2em;
+   -webkit-box-shadow: 7px 7px 15px 2px #222;
+   -moz-box-shadow: 7px 7px 15px 2px #222;
    box-shadow: 7px 7px 15px 2px #222;
 /* width: 85%;
    max-width: 750px;
@@ -532,10 +544,23 @@ form.inline_edit {
 .more:hover:after {
    width: 100%;
 }
-.license > a > img {
+
+/*.license > a > img {
    float: left;
    margin-right: 10px;
+}*/
+
+.license_img{
+   width: 12%;
+   min-width: 100px;
+   float: left;
 }
+
+.license{
+   width: 88%;
+   float: right;
+}
+
 
 .comments {
    margin: 0 0 0 3rem;
@@ -545,11 +570,13 @@ form.inline_edit {
 .flex-row{
    display: flex;        /* Flex layout so items have equal height  */
    display: -webkit-flex; /* Safari */
+   margin-left: 0px;
 }
 
 .comments_corner{
    padding: 0px;
 }
+
 /* Triangle shadow*/
 .comments_corner:before {
   content: "";
@@ -572,9 +599,9 @@ form.inline_edit {
    background-color: #fefed2;
 }
 
-#disqus_thread {
+/*#disqus_thread {
   padding-left: 5vh;
-}
+}*/
 
 .comments_content {
    background-color: #fefed2;
@@ -598,12 +625,12 @@ form.inline_edit {
    body {font-size:80%;}
    .header_box { display:none; }
    .header_controls { width: 100%;}
-   .navbar-collapse{box-shadow: 0px 10px 0px rgba(64, 112, 60, 0.4) inset;}
+   .navbar-collapse{-webkit-box-shadow: 0px 10px 0px rgba(64, 112, 60, 0.4) inset;-moz-box-shadow: 0px 10px 0px rgba(64, 112, 60, 0.4) inset;box-shadow: 0px 10px 0px rgba(64, 112, 60, 0.4) inset;}
    .izquierda{padding-left:1px; padding-right:5px;font-size:2.3vw;line-height:3vw;}
-   .date {background-color:#40a070;transform:skew(20deg, -16deg);width:12vw;height:12vw;font-size:3vw;}
+   .date {background-color:#40a070;-webkit-transform:rotate(-16deg);-moz-transform:skew(20deg, -16deg);-o-transform:skew(20deg, -16deg);transform:rotate(-16deg);width:12vw;height:12vw;font-size:3vw;}
    .post_content{width:98%;}
    .highlight{max-width:100%;padding-left:1px;}
-   
+   .license{width: -webkit-calc(99% - 100px);width: -moz-calc(100% - 100px);width: -o-calc(100% - 100px);width: calc(100% - 100px);}
 }
 
 .navbar-toggle{
