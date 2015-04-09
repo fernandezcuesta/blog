@@ -1,5 +1,5 @@
 Title: Logical disks in OpenVMS
-Published: True
+
 Location: Santander, ES
 Tags: OpenVMS
 

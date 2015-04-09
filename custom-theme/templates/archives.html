@@ -14,7 +14,7 @@
 			{#- hold on to your butts! #}
 
          {% set month = None -%}
-         {%- for article in dates -%}
+         {%- for article in dates if 'hidden' not in article.categories -%}
             {% set cmonth = article.date.date().replace(day=1) %}
             {%- if not month -%}
             {%   set month = cmonth %}
@@ -52,5 +52,13 @@
                 <p>There aren't any posts in the timeframe specified.</p>
             </div>
         {% endif %}
+    </div>
+    <div class="rowpost">
+        <div class="col-xs-2 col-md-2 col-lg-2"></div>
+        <div class="col-xs-10 col-md-10 col-lg-10">
+            <h1>Browse by tag:</h1>  
+            {% block tags %}{% include "tags.html" %}{% endblock tags%}
+            <br><br>
+        </div>
     </div>
 {% endblock %}

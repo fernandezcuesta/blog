@@ -1,5 +1,5 @@
 Title: Sharing a VPN session
-Published: True
+
 Location: Santander, ES
 Tags: iptables, linux, networking, security
 

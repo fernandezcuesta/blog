@@ -31,9 +31,6 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
-body {
-	line-height: 1;
-}
 ol, ul {
 	list-style: none;
 }
@@ -90,14 +87,14 @@ h1 {
    font-size: 2em;
    font-weight: bold;
    margin: 0 0 2em 0;
+   -webkit-transition-duration: 0.3s;
+   -moz-transition-duration: 0.3s;
+   -o-transition-duration: 0.3s;
+   transition-duration: 0.3s;
 }
 
 h1:hover {
    box-shadow:0px 10px 0px 0px #40a070;
-   -webkit-transition: box-shadow 0.3s ease-out; 
-   -moz-transition: box-shadow 0.3s ease-out; 
-   -o-transition: box-shadow 0.3s ease-out; 
-   transition: box-shadow 0.3s ease-out; 
 }
 
 h2, h3 {
@@ -127,14 +124,14 @@ blockquote {
    font-family: 'Poiret One',cursive;
    font-weight: bold;
    text-align: center;
+   -o-transition-duration: .5s;
+   -moz-transition-duration: .5s;
+   -webkit-transition-duration: .5s;
+   transition-duration: .5s;
 	}
 
 .date:hover{
    background-color:#40a070;
-   -webkit-transition-duration: 1s;
-   -moz-transition-duration: 1s;
-   -o-transition-duration: 1s;
-   transition-duration: 1s;
    -webkit-transform:skew(20deg, -16deg);
    -moz-transform:skew(20deg, -16deg);
    -o-transform:skew(20deg, -16deg);
@@ -159,14 +156,14 @@ blockquote {
 
 .post_content{
     width:95%;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
 }
 
 .post_content a:hover, .post.archives a:hover {
    text-shadow: -2px 2px 2px #777;
-   -moz-transition: all 0.3s ease;
-   -webkit-transition: all 0.3s ease;
-   -o-transition: all 0.3s ease;
-   transition: all 0.3s ease;
 }
 
 .post.archives {
@@ -220,8 +217,16 @@ blockquote {
     transform: rotate(-7deg);
 }
 
+.tag {
+    -o-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
 
-
+.tag:hover {
+    color: #40a070;
+}
 
 .post .controls {
 	float: left;
@@ -373,15 +378,15 @@ form.inline_edit {
    font-weight: bold;
    color: #777;
    margin: .3rem 0;
+   -moz-transition-duration: .5s;
+   -o-transition-duration: .5s;
+   -webkit-transition-duration: .5s;
+   transition-duration: .5s;
 	}
 
 .headsubtitle:hover {
    color: #141;
    text-shadow: #40a070 1px 1px, #40a070 2px 2px, #40a070 3px 3px, #40a070 4px 4px, #40a070 5px 5px, #40a070 6px 6px;
-   -moz-transition: all .5s ease-out; /* FF3.7+ */
-   -o-transition: all .5s ease-out; /* Opera 10.5 */
-   -webkit-transition: all .5s ease-out; /* Saf3.2+, Chrome */
-   transition: all .5s ease-out;
 }
 
 
@@ -445,26 +450,19 @@ form.inline_edit {
 .pages a {
 	color: inherit;
 	border: none;
+    transition: all 1s ease-in-out;
 	}
 
 .pages a.next_page:hover {
    -ms-transform: rotate(-360deg);
    -webkit-transform: rotate(-360deg);
    transform: rotate(-360deg);
-   -moz-transition: transform 1s ease;
-   -webkit-transition: transform 1s ease;
-   -o-transition: transform 1s ease;
-   transition: transform 1s ease;
 	}
 
 .pages a.prev_page:hover {
    -ms-transform: rotate(360deg);
    -webkit-transform: rotate(360deg);
    transform: rotate(360deg);
-   -moz-transition: transform 1s ease;
-   -webkit-transition: transform 1s ease;
-   -o-transition: transform 1s ease;
-   transition: transform 1s ease;
 	}
 
 .pages span {
@@ -484,14 +482,17 @@ form.inline_edit {
    font-size: .8em;
 	}
 
-#footer a { color: inherit; }
+#footer a {
+    color: inherit;
+   -moz-transition-duration: .3s;
+   -webkit-transition-duration: .3s;
+   -o-transition-duration: .3s;
+   transition-duration: .3s;
+    
+}
 
 #footer a:hover {
    text-shadow: -2px 2px 2px #777;
-   -moz-transition: all 0.3s ease;
-   -webkit-transition: all 0.3s ease;
-   -o-transition: all 0.3s ease;
-   transition: all 0.3s ease;
 }
 
 #footer p { margin: 0; }
@@ -531,10 +532,10 @@ form.inline_edit {
    height: 5px;
    background-color: #40a070;
    content: "";
-   -moz-transition: width 0.3s;
-   -webkit-transition: width 0.3s;
-   -o-transition: width 0.3s;
-   transition: width 0.3s;
+   -moz-transition-duration: .3s;
+   -webkit-transition-duration: .3s;
+   -o-transition-duration: .3s;
+   transition-duration: .3s;
 }
 
 .more:hover {
