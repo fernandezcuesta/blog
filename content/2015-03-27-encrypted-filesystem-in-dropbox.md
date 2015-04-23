@@ -1,13 +1,13 @@
 Title: Encrypted filesystem in Dropbox
 Date: 27-mar-2015 18:09:11
 tags: linux, internet, security
-status: draft
+status: published
 
 The idea is to set up a container where we can put private/secret files.
-A way to achieve this is setting up LUKS on top of a fix-length file,
+A way to achieve this is setting up **LUKS** on top of a fix-length file,
 i.e. `~/Dropbox/private.img`.
 
-Steps:
+##Initialization:
 
 - Initialize a (for example) 100MB file:
 
@@ -35,4 +35,78 @@ Steps:
         $ sudo umount /tmp/private
         $ sudo cryptsetup luksClose private
         $ mv /tmp/private.img ~/Dropbox/private.img
+
+##Configuration:
+
+For this to be shown as a device, we can do the following:
+
+###Option 1: using `/etc/rc.local`
+
+    #!/bin/bash
+    case $1 in
+     start)
+     # start script
+     losetup --find --show /home/user/Dropbox/Personal.img
+     losetup /dev/loop0
+     ;;
+     stop)
+     # stop script
+     losetup -d /dev/loop0
+     ;;
+    esac
+    exit
+
+To start this on every boot do:
+
+    :::bash
+    $ sudo chmod +x /etc/rc.local
+
+And ensure the unit file for `rc.local` compatibility
+(`/etc/systemd/system/rc-local.service`) is enabled and contains:
+
+    :::bash
+    [Unit]
+    Description=/etc/rc.local Compatibility
+    ConditionPathExists=/etc/rc.local
+
+    [Service]
+    Type=forking
+    ExecStart=/etc/rc.local start
+    ExecStop=/etc/rc.local stop
+    TimeoutSec=0
+    StandardOutput=tty
+    RemainAfterExit=yes
+    SysVStartPriority=99
+
+    [Install]
+    WantedBy=multi-user.target
+
+###Option 2: user systemd unit
+
+Create a systemd user unit file as follows under `/etc/systemd/system`, for
+example `/etc/systemd/system/mountloop@.service`:
+
+    :::bash
+    [Unit]
+    Description=Mount loop device
+    DefaultDependencies=no
+    Conflicts=umount.target
+    Before=local-fs.target umount.target
+
+    [Service]
+    Type=forking
+    ExecStart=/usr/sbin/losetup --find --show /data/Dropbox/Personal.img
+    ExecStop=/usr/sbin/losetup -d `losetup | grep -Po '.+(?=(\s+\d){4}.*/data/Dropbox/Personal.img)'`
+    TimeoutSec=0
+    RemainAfterExit=no
+
+    [Install]
+    WantedBy=default.target
+
+Then enable this unit file:
+
+    :::bash
+    $ sudo systemctl daemon-reload
+    $ sudo systemctl enable mountloop
+    $ sudo systemctl start mountloop
 

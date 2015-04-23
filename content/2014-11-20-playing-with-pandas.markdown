@@ -1,7 +1,6 @@
 Title: Playing with pandas
-Published: True
+status: published
 Location: Santander, ES
-Googlewebfonts: "Bree+Serif"
 Tags: pandas, python
 
 ## Select all (but one) columns of a dataframe

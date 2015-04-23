@@ -1,7 +1,6 @@
 Title: Bypassing DNS assigned by VPN
-Published: True
+status: published
 Location: Santander, ES
-Googlewebfonts: "Bree+Serif"
 Tags: iptables, networking, security, linux
 Categories: 
 

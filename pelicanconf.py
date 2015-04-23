@@ -49,11 +49,11 @@ DEFAULT_PAGINATION = 3
 RELATIVE_URLS = True
 
 THEME = 'custom-theme'
-
-PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['summary', 'liquid_tags.img', 'liquid_tags.video',
-           'liquid_tags.include_code', 'liquid_tags.notebook',
-           'liquid_tags.literal']
+PLUGINS = ['minify']
+#PLUGIN_PATHS = ['pelican-plugins']
+#PLUGINS = ['summary', 'liquid_tags.img', 'liquid_tags.video',
+#           'liquid_tags.include_code', 'liquid_tags.notebook',
+#           'liquid_tags.literal']
 
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = True

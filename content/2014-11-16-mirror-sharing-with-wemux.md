@@ -1,5 +1,5 @@
 Title: Mirror sharing with tmux/wemux
-
+status: published
 Location: Santander, ES
 Tags: iptables, linux, networking, agile
 
@@ -31,7 +31,7 @@ default_client_mode="mirror"    # all clients are attached read-only
 
 Create a guest user and set OpenSSH up as follows:
 
-    #!/bin/bash
+    :::bash
     # Ensure only public key authentication is allowed
     $ sudo sed -E -i.bak 's/^#?(PasswordAuthentication|ChallengeResponseAuthentication).*$/\1 no/' /etc/ssh/sshd_config
 

@@ -1,7 +1,6 @@
 Title: Combining pandas dataframes
-Published: True
+status: published
 Tags: python, pandas, code
-comments: true
 
 Although still touching bases with pandas I came across a problem whose
 answer was not found after skimming through Wes McKinney's [_"Python for Data

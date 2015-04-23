@@ -1,7 +1,6 @@
 Title: load ""
-Published: true
-tags: 
-- misc
+status: published
+tags: misc
 
 And 20min later...
 
