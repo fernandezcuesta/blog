@@ -349,11 +349,12 @@ form.inline_edit {
 	}
 #nav a:hover {
 	background-color: #777;
-    font-weight: bold;
+    color: #fafafa;
 	}
 #nav li.selected a {
 	background-color: #000;
 	color: #FFF;
+    font-weight: bold;
     font-variant: small-caps;
 	}
 #nav li.ephemeral.selected a {
