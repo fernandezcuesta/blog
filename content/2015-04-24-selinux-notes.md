@@ -1,4 +1,4 @@
-Title: SELinux notes
+Title: Keep calm and setenforce 1 - SELinux notes
 Date: 2015-04-24 11:47:27
 status: published
 tags: linux, security
@@ -137,6 +137,14 @@ For example, in order to enable samba shares (`-P` for permanent):
         # restorecon -Rv /ftp
         # ls -ldZ /ftp
 
+- Unconfined processes:
+
+        :::console
+        # ls -Z /usr/sbin/httpd
+        -rwxr-xr-x  root root system_u:object_r:httpd_exec_t:s0 /usr/sbin/httpd
+        # chcon -t bin_t /usr/sbin/httpd
+        # ls -Z /usr/sbin/httpd
+        -rwxr-xr-x. root root system_u:object_r:bin_t:s0       /usr/sbin/httpd
 
 ###Show all available SELinux contexts
 
