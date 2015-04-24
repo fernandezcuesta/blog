@@ -102,6 +102,9 @@ h2, h3 {
 	line-height: 1em;
 	margin: 1.1em 0;
 	}
+h3 {
+   font-size: 1.2em;
+   }
 p, h4, h5, h6 {
 	margin: 1.2em 0;
 	}
