@@ -205,10 +205,23 @@ If extracting a tar file without extended attribute information, do:
 
         :::console
         # tail -f /var/log/audit/audit.log | audit2why
-or
+
+        or
+
+        # tail -f /var/log/audit/audit.log | audit2allow -a
+
+    In addition, as explained in
+[certdepot](http://www.certdepot.net/selinux-diagnose-policy-violations/),
+we can filter on the AVC as follows:
 
         :::console
-        # tail -f /var/log/audit/audit.log | audit2allow -a
+        # tailf /var/log/audit/audit.log
+        ...
+        type=AVC msg=audit(1415714880.156:29): avc:  denied  { name_connect } for  pid=1349 \
+          comm="nginx" dest=8080 scontext=unconfined_u:system_r:httpd_t:s0 \
+          tcontext=system_u:object_r:http_cache_port_t:s0 tclass=tcp_socket
+        
+        # grep 1415714880.156:29 /var/log/audit/audit.log | audit2why
 
 - If an output like this one is shown:
 
@@ -237,5 +250,7 @@ in the journal or in `/var/log/messages` like:
 
 
 
-**[REF](https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security-Enhanced_Linux/)**
+##References
 
+- [RHEL7 SELinux user's and Administrator's Guide](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/SELinux_Users_and_Administrators_Guide/index.html)
+- [Certdepot](http://www.certdepot.net/selinux-diagnose-policy-violations/)
