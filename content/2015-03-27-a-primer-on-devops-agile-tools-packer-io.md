@@ -1,6 +1,6 @@
 Title: A primer on DevOps agile tools - packer.io
 Date: 2015-03-29
-tags: linux, internet, agile
+tags: agile, linux, internet
 status: published
 
 ###Pros:
@@ -21,7 +21,10 @@ installedbut scripts are missing; resuming would retry from the last stage).
 the box. While in most cases this is not a problem, I got several *no space
 left* errors when working on a system where `/tmp` is a ramdisk and overall
 memory usage is high.
-
+- Although this is clearly a vagrant issue, VM is reloaded (all changes are
+rolled back to the state where packer's postprocessor finished) if there's
+a problem with `vagrant up`. There's no chance for the user to fix the VM
+before it is reloaded.
 
 
 #Packer template

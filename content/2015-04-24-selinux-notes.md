@@ -118,7 +118,7 @@ For example, in order to enable samba shares (`-P` for permanent):
         # ls -lZ
 
 
-###Change SELinux contexts
+###Change SELinux file contexts
 
 - <u>Temporary changes</u>: **`chcon`**
 
@@ -190,11 +190,28 @@ use `-o nosharecache` option.
     :::console
     # tar --selinux
 
-If extracting a tar file without extended attribute information, do:
+If extracting a tar file ***without*** extended attribute information, do:
 
     :::console
     # tar -zxvf archive.tar.gz | restorecon -f -
 
+##OTHER
+
+###Copy files while preserving the context information
+    :::console
+    $ cp --preserve=context source_file destination_file
+
+###Add a custom port for a service
+    :::console
+    # semanage port -a -t http_port_t -p 10443
+
+###Mounting filesystems with specific SELinux contexts
+    :::console
+    # mount server:/export /local/mount/point -o context="system_u:object_r:httpd_sys_content_t:s0"
+    
+    or in /etc/fstab
+    
+    #server:/export /local/mount/ nfs context="system_u:object_r:httpd_sys_content_t:s0" 0 0
 
 ##TROUBLESHOOT
 
