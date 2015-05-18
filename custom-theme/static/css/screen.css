@@ -255,7 +255,7 @@ code{
 	font-family: monospace;
 	padding: 3px;
 	border-radius: 10px 0;
-    word-break: break-all;
+/*    word-break: break-all; */
 }
 
 .highlight{

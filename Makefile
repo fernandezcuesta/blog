@@ -66,6 +66,8 @@ newpost:
 ifdef NAME
 	echo "Title: $(NAME)" >  $(INPUTDIR)/$(SLUG).$(EXT)
 	echo "Date: $(DATE)" >> $(INPUTDIR)/$(SLUG).$(EXT)
+    echo "Status: draft" >> $(INPUTDIR)/$(SLUG).$(EXT)
+    echo "Tags: "        >> $(INPUTDIR)$(SLUG).$(EXT)
 	echo ""              >> $(INPUTDIR)/$(SLUG).$(EXT)
 	echo ""              >> $(INPUTDIR)/$(SLUG).$(EXT)
 	${EDITOR} ${INPUTDIR}/${SLUG}.${EXT}

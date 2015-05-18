@@ -43,15 +43,15 @@ For this to be shown as a device, we can do the following:
 ###Option 1: using `/etc/rc.local`
 
     #!/bin/bash
+    IMG_LOCATION=/home/user/Dropbox/private.img
     case $1 in
      start)
      # start script
-     losetup --find --show /home/user/Dropbox/Personal.img
-     losetup /dev/loop0
+     losetup --find --show $IMG_LOCATION
      ;;
      stop)
      # stop script
-     losetup -d /dev/loop0
+     losetup -d `losetup | grep -Po ".+(?=(\s+\d){4}.*$IMG_LOCATION)"`
      ;;
     esac
     exit
@@ -81,10 +81,10 @@ And ensure the unit file for `rc.local` compatibility
     [Install]
     WantedBy=multi-user.target
 
-###Option 2: user systemd unit
+###Option 2: systemd unit
 
 Create a systemd user unit file as follows under `/etc/systemd/system`, for
-example `/etc/systemd/system/mountloop@.service`:
+example `/etc/systemd/system/mountloop.service`:
 
     :::bash
     [Unit]
@@ -93,12 +93,14 @@ example `/etc/systemd/system/mountloop@.service`:
     Conflicts=umount.target
     Before=local-fs.target umount.target
 
+
     [Service]
     Type=forking
-    ExecStart=/usr/sbin/losetup --find --show /data/Dropbox/Personal.img
-    ExecStop=/usr/sbin/losetup -d `losetup | grep -Po '.+(?=(\s+\d){4}.*/data/Dropbox/Personal.img)'`
+    Environment="IMG_LOCATION=/home/user/Dropbox/private.img"
+    ExecStart=/usr/sbin/losetup --find --show ${IMG_LOCATION}
+    ExecStop=/bin/bash -c "/usr/sbin/losetup -d `losetup | grep -Po \".+(?=(\s+\d){4}.*${IMG_LOCATION})\"`"
     TimeoutSec=0
-    RemainAfterExit=no
+    RemainAfterExit=yes
 
     [Install]
     WantedBy=default.target

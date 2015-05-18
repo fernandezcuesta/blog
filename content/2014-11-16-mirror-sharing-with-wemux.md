@@ -31,7 +31,7 @@ default_client_mode="mirror"    # all clients are attached read-only
 
 Create a guest user and set OpenSSH up as follows:
 
-    :::bash
+    #!/bin/bash
     # Ensure only public key authentication is allowed
     $ sudo sed -E -i.bak 's/^#?(PasswordAuthentication|ChallengeResponseAuthentication).*$/\1 no/' /etc/ssh/sshd_config
 
@@ -42,9 +42,9 @@ Create a guest user and set OpenSSH up as follows:
     # Create ssh key for guest
     $ su - guest
     $ mkdir .ssh
-    $ ssh-keygen -N MY_PASSPHRASE -f .ssh/guest-ssh-key
-    $ echo 'command="wemux",no-port-forwarding,no-x11-forwarding,no-agent-forwarding ' > .ssh/authorized_keys 
-    $ cat .ssh/guest-ssh-key.pub >> .ssh/authorized_keys
+    $ ssh-keygen -N MY_PASSPHRASE -f ~/.ssh/guest-ssh-key
+    $ echo -n 'command="wemux",no-port-forwarding,no-x11-forwarding,no-agent-forwarding ' >> ~/.ssh/authorized_keys 
+    $ cat ~/.ssh/guest-ssh-key.pub >> ~/.ssh/authorized_keys
 
 
 Now share keys to the other party over a secure channel.
@@ -80,5 +80,13 @@ for example:
 tmux new-session -s shared
 ```
 
-On **line 13** above, replace `command="wemux"` by
-`command="tmux attach-session -t session -r"` and you're done!.
+And add an authorized key to the `~/.ssh/authorized_keys` file for the user
+that started the tmux session, like:
+
+    :::bash
+    $ echo -n 'command="tmux attach-session -t session -r"' >> ~/.ssh/authorized_keys
+    $ cat ~/.ssh/guest-ssh-key.pub >> ~/.ssh/authorized_keys
+
+The end user will have to log in with
+`ssh user@your-host-name:REDIRECTED_PORT -i guest-ssh-key` where `user` is
+the one owning the tmux server.

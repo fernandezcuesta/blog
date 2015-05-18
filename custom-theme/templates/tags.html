@@ -15,7 +15,7 @@
 {% block tags %}
 
                 {% for tag in tag_cloud -%}
-                <a class="tag" href="{{ tag_url(tag) }}" style="font-size: {{ tagprio_to_fontsz(tag.1) }}; opacity: {{ tagprio_to_col(tag.1) }};" title="Filter articles by tag: {{ tag.0 }}">{{ tag.0 }} </a>
+                <a class="tag" href="{{ tag_url(tag)|lower }}" style="font-size: {{ tagprio_to_fontsz(tag.1) }}; opacity: {{ tagprio_to_col(tag.1) }};" title="Filter articles by tag: {{ tag.0 }}">{{ tag.0 }} </a>
                 {% else %}
                 <h1>No tags!</h1>
                 There aren't any tags yet. Such a shame... ;_(
