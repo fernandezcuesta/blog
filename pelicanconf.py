@@ -19,12 +19,18 @@ SITEURL = 'http://fernandezcuesta.github.io'
 
 PATH = 'content'
 OUTPUT_PATH = 'fernandezcuesta.github.io/'
+DELETE_OUTPUT_DIRECTORY = True
 OUTPUT_RETENTION = [".git"]
 
 TIMEZONE = 'Europe/Madrid'
+GOOGLE_ANALYTICS = 'UA-56464775-1'
 
 DEFAULT_LANG = 'en'
 DEFAULT_DATE_FORMAT = '%b %d, %Y'
+DEFAULT_DATE = 'fs'
+TYPOGRIFY = True
+DIRECT_TEMPLATES = ('index', 'archives')
+WITH_FUTURE_DATES = False
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -42,6 +48,7 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
 # Social widget
 SOCIAL = (('Google+', 'https://plus.google.com/+JMFernándezC'),
           ('github', 'https://github.com/fernandezcuesta/'),)
+ABOUT_URL = 'https://about.me/fernandez.cuesta'
 
 DEFAULT_PAGINATION = 3
 
@@ -61,6 +68,9 @@ DISPLAY_CATEGORIES_ON_MENU = True
 # Search
 SEARCH_BOX = True
 SUMMARY_MAX_LENGTH = 100
+
+TAG_CLOUD_STEPS = 5
+TAG_CLOUD_MAX_ITEMS = 30
 
 #Comments
 DISQUS_SITENAME = u'vt100'
