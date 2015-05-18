@@ -1,14 +1,16 @@
    {% block footer %}
    <div class="row" id="footer">
+       {% if LICENSE_IMG %}
        <div class="license_img">
-          <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-           <img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+          <a rel="license" {% if LICENSE_URL %}href="{{ LICENSE_URL }}"{% endif %}>
+           <img alt="{{ LICENSE }}" style="border-width:0" src="{{ LICENSE_IMG }}" />
           </a>
        </div>
+       {% endif %}
        <div class="license">
            <div>
              <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
-             <strong>{{ SITENAME  }}</strong></span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
+             <strong>{{ SITENAME  }}</strong></span> is licensed under a <a rel="license" {%if LICENSE_URL %}href="{{ LICENSE_URL}}"{% endif %}>{{ LICENSE }}</a>
            </div>
           <div>
             <p>Powered by <a href="http://getpelican.com">Pelican</a>&nbsp;&middot;&nbsp;Theme based on <a href="https://github.com/wrl/pelican-mockingbird">Mockingbird by Nevan Scott</a></p>

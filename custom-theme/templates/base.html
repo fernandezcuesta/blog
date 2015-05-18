@@ -23,11 +23,11 @@
     <link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
     {% endif %}
 
-    {% if 'tipue_search' in PLUGINS %}
-        <link href="{{ SITEURL}}/theme/tipuesearch/tipuesearch.css" rel="stylesheet">
-    {% endif %}
 
-     <!-- Bootstrap and custom style -->
+     <!-- Tipuesearch, Bootstrap and custom style -->
+{% if 'tipue_search' in PLUGINS %}
+    <link href="{{ SITEURL}}/theme/tipuesearch/tipuesearch.css" rel="stylesheet">
+{% endif %}
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/screen.css" type="text/css" />
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments.css" type="text/css" />
@@ -76,19 +76,19 @@
                     <li {%- if output_file == "archives.html" %} class="selected"{% endif %}><a href="{{ SITEURL }}/archives.html">Archives</a></li>
                     {% if ABOUT_URL %}<li><a href="{{ ABOUT_URL }}">About</a></li>{% endif %}
                     {%- block ephemeral_nav %}{%- endblock %}
-                </ul>
-             </div>
-         </div>
-
-        {% if 'tipue_search' in PLUGINS %}
-        <div class="row navbar-header navbar-right">
+{% if 'tipue_search' in PLUGINS %}
+        <li class="row navbar-header navbar-right">
           <span>
-            <form class="navbar-search" action="/search">
+            <form class="navbar-search" id="searchform" action="{{ SITEURL }}/search.html" onsubmit="return validateForm(this.elements['q'].value);">
               <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input" required>
             </form>
          </span>
-        </div>
-        {% endif %}
+        </li>
+{% endif %}
+                </ul>
+
+             </div>
+         </div>
     </div>
     <!-- /.navbar-collapse -->
 </nav> <!-- /.navbar -->
@@ -106,7 +106,7 @@
    
          <div class="clear"></div>
    </div>
-   {% block footer %}{% include 'footer.html' %}{% endblock footer %}
+   {% block footer %}{% if LICENSE %}{% include 'footer.html' %}{% endif %}{% endblock footer %}
 
    <div class="clear"></div>
 </div>

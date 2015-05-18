@@ -28,7 +28,7 @@ GOOGLE_ANALYTICS = 'UA-56464775-1'
 DEFAULT_LANG = 'en'
 DEFAULT_DATE_FORMAT = '%b %d, %Y'
 TYPOGRIFY = True
-DIRECT_TEMPLATES = ('index', 'archives')
+DIRECT_TEMPLATES = (('index', 'archives', 'search'))
 WITH_FUTURE_DATES = False
 
 # Feed generation is usually not desired when developing
@@ -55,8 +55,8 @@ DEFAULT_PAGINATION = 3
 RELATIVE_URLS = True
 
 THEME = 'custom-theme'
-PLUGINS = ['minify']
-#PLUGIN_PATHS = ['pelican-plugins']
+PLUGIN_PATHS = ['pelican-plugins']
+PLUGINS = ['minify', 'tipue_search']
 #PLUGINS = ['summary', 'liquid_tags.img', 'liquid_tags.video',
 #           'liquid_tags.include_code', 'liquid_tags.notebook',
 #           'liquid_tags.literal']
@@ -78,3 +78,9 @@ DISQUS_PUBLIC_KEY = u'YOUR_PUBLIC_KEY'
 
 #Markdown extensions: http://pythonhosted.org/Markdown/extensions/
 MD_EXTENSIONS = ['codehilite(css_class=highlight, pygments_style=native)','extra','markdown.extensions.smarty']
+
+LICENSE = 'Creative Commons Attribution 4.0 International License'
+LICENSE_URL = 'http://creativecommons.org/licenses/by/4.0/'
+LICENSE_IMG = 'https://i.creativecommons.org/l/by/4.0/88x31.png'
+
+
