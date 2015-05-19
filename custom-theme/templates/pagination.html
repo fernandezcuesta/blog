@@ -19,4 +19,6 @@
                     <span style="text-align: left">This is the last page ({{ articles_paginator.num_pages }})</span>
                 {%- endif %}
                 </div>
+{% else %}
+    {% include 'back.html' %}
 {% endif %}
