@@ -19,7 +19,7 @@ SITEURL = 'http://fernandezcuesta.github.io'
 
 PATH = 'content'
 OUTPUT_PATH = 'fernandezcuesta.github.io/'
-DELETE_OUTPUT_DIRECTORY = True
+DELETE_OUTPUT_DIRECTORY = False
 OUTPUT_RETENTION = [".git"]
 
 TIMEZONE = 'Europe/Madrid'
@@ -28,7 +28,7 @@ GOOGLE_ANALYTICS = 'UA-56464775-1'
 DEFAULT_LANG = 'en'
 DEFAULT_DATE_FORMAT = '%b %d, %Y'
 TYPOGRIFY = True
-DIRECT_TEMPLATES = (('index', 'archives', 'search'))
+DIRECT_TEMPLATES = ('index', 'archives', 'search')
 WITH_FUTURE_DATES = False
 
 # Feed generation is usually not desired when developing
@@ -38,36 +38,24 @@ TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
-# Blogroll
-LINKS = (('Pelican', 'http://getpelican.com/'),
-         ('Python.org', 'http://python.org/'),
-         ('Jinja2', 'http://jinja.pocoo.org/'),
-         ('You can modify those links in your config file', '#'),)
-
 # Social widget
 SOCIAL = (('Google+', 'https://plus.google.com/+JMFernándezC'),
           ('github', 'https://github.com/fernandezcuesta/'),)
 ABOUT_URL = 'https://about.me/fernandez.cuesta'
 
-DEFAULT_PAGINATION = 3
+DEFAULT_PAGINATION = 4
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
 
 THEME = 'custom-theme'
-PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['minify', 'tipue_search']
-#PLUGINS = ['summary', 'liquid_tags.img', 'liquid_tags.video',
-#           'liquid_tags.include_code', 'liquid_tags.notebook',
-#           'liquid_tags.literal']
+PLUGIN_PATHS = ['plugins']
+PLUGINS = ['tipue_search', 'minify']
 
 DISPLAY_PAGES_ON_MENU = True
-DISPLAY_CATEGORIES_ON_MENU = True
+DISPLAY_CATEGORIES_ON_MENU = False
 
-# Search
-SEARCH_BOX = True
 SUMMARY_MAX_LENGTH = 100
-
 TAG_CLOUD_STEPS = 5
 TAG_CLOUD_MAX_ITEMS = 30
 
@@ -77,10 +65,13 @@ DISQUS_SECRET_KEY = u'MCUaJq4X7060BPJ9BziZ4glXu5VHsbQnbcHXdzKNhbPKcRIxpGQSrIcWGO
 DISQUS_PUBLIC_KEY = u'YOUR_PUBLIC_KEY'
 
 #Markdown extensions: http://pythonhosted.org/Markdown/extensions/
-MD_EXTENSIONS = ['codehilite(css_class=highlight, pygments_style=native)','extra','markdown.extensions.smarty']
+MD_EXTENSIONS = ['codehilite(css_class=highlight, pygments_style=native)', 'extra', 'markdown.extensions.smarty']
 
+#License
 LICENSE = 'Creative Commons Attribution 4.0 International License'
 LICENSE_URL = 'http://creativecommons.org/licenses/by/4.0/'
 LICENSE_IMG = 'https://i.creativecommons.org/l/by/4.0/88x31.png'
 
-
+#Look
+USE_FAVICON = True
+SITELOGO = 'title.png'

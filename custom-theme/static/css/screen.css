@@ -374,6 +374,8 @@ form.inline_edit {
 .header_box ul {
     list-style: none;
     text-align: right;
+   font-family: 'Poiret One',cursive;
+   font-weight: bold;
 }
 
 .header_controls {
@@ -381,14 +383,17 @@ form.inline_edit {
 }
 
 .headtitle {
+    font-size: 4vw;
+    line-height: 4.5vw;
+    font-weight: bold;
+}
+.headtitle img {
     max-width: 100%;
     height: auto;
 }
 
 .headsubtitle {
    font-size: 1.75em;
-   font-family: 'Poiret One',cursive;
-   font-weight: bold;
    color: #777;
    margin: .3rem 0;
    -moz-transition-duration: .5s;
@@ -575,6 +580,10 @@ form.inline_edit {
    float: right;
 }
 
+#tipue_search_warning, #tipue_search_results_count{
+   font-size: 30px;
+   font-family: 'Oswald', 'Open Sans', sans-serif;
+}
 
 .comments {
    margin: 0 0 0 3rem;

@@ -9,9 +9,9 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{{ SITEURL }}/theme/images/favicon.ico" />
-
-    {% block canonical_rel %}{% endblock %}
+{% if USE_FAVICON %}
+    <link rel="shortcut icon" href="{{ SITEURL }}/theme/images/favicon.ico" type="image/x-icon" />
+{% endif %}
     {% block meta %}
        <meta name="author" content="{{ AUTHOR }}" />
     {% endblock %}
@@ -34,6 +34,17 @@
 <!--
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/font-awesome.min.css" type="text/css"> 
 -->
+
+{% block scripts %}
+    <script src="{{ SITEURL }}/theme/js/jquery.min.js"></script>
+    <script src="{{ SITEURL }}/theme/js/bootstrap.min.js"></script>
+    <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+    <script src="{{ SITEURL }}/theme/js/respond.min.js"></script>
+{% endblock scripts %}
+
+
+    {% include 'analytics.html' %}
+
 </head>
 <body>
 
@@ -45,20 +56,21 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a href="{{ SITEURL }}/" class="navbar-brand">
-            {% if SITELOGO %}<img src="{{ SITEURL }}/{{ SITELOGO }}" width="{{ SITELOGO_SIZE }}"/> {% endif %}
-        </a>
     </div>
     <div class="navbar-collapse collapse">
          <div id="header">
              <div class="col-xs-5 col-md-6 col-lg-6 header_box">
                 <ul>
-                {%- if SITESUBTITLE %}
+{%- if SITESUBTITLE %}
                   <li class="headsubtitle">{{ SITESUBTITLE }}</li>
-                {%- endif %}
+{%- endif %}
                 {% if SITENAME -%}
-                  <li>
-                    <a href="{{ SITEURL }}"><img class="headtitle" src="{{ SITEURL }}/theme/images/title.png" alt="sys$notes"/></a>
+                  <li class="headtitle">
+{%- if SITELOGO %}
+                    <a href="{{ SITEURL }}"><img src="{{ SITEURL }}/theme/images/{{ SITELOGO }}" alt="{{ SITENAME }}"/></a>
+{%- else %}
+                    <a href="{{ SITEURL }}">{{ SITENAME }}</a>
+{%- endif %}
                   </li>
                 {%- endif %}
                 </ul>
@@ -78,11 +90,9 @@
                     {%- block ephemeral_nav %}{%- endblock %}
 {% if 'tipue_search' in PLUGINS %}
         <li class="row navbar-header navbar-right">
-          <span>
-            <form class="navbar-search" id="searchform" action="{{ SITEURL }}/search.html" onsubmit="return validateForm(this.elements['q'].value);">
-              <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input" required>
+            <form action="search.html">
+              <input type="text" name="q" id="tipue_search_input" autocomplete="off" required>
             </form>
-         </span>
         </li>
 {% endif %}
                 </ul>
@@ -93,15 +103,15 @@
     <!-- /.navbar-collapse -->
 </nav> <!-- /.navbar -->
 
-
 <div class="container{% if BOOTSTRAP_FLUID %}-fluid{% endif %}">
          <!-- OLD NAVIGATOR -->
     <div id="content">
          <div class="row">
              <div class="col-xs-12 col-md-12 col-lg-12">
-                {% block breadcrumbs %}{% endblock %}
+                {% block page_top %}{% endblock %}
              </div>
          </div>
+
          {% block content %}{% endblock %}
    
          <div class="clear"></div>
@@ -110,12 +120,7 @@
 
    <div class="clear"></div>
 </div>
-<!-- Scripts -->
-<script src="{{ SITEURL }}/theme/js/jquery.min.js"></script>
-<script src="{{ SITEURL }}/theme/js/bootstrap.min.js"></script>
-<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
-<script src="{{ SITEURL }}/theme/js/respond.min.js"></script>
 
-{% include 'analytics.html' %}
 </body>
+<!-- Theme: notebook for Pelican -->
 </html>

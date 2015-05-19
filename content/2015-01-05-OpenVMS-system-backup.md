@@ -3,8 +3,7 @@ status: published
 Location: Santander, ES
 Tags: OpenVMS
 
-##Wrapper for doing automatic backups of the system unit (DSA0:) in OpenVMS
-
+Wrapper for doing automatic backups of the system unit (`DSA0:`) in OpenVMS.
 In a nutshell:
 
 - It assumes that OS is installed in `DSA0:` unit.
@@ -15,8 +14,6 @@ via s/FTP to a remote SAN.
 - Script takes care of housekeeping according to configured values.
 
 
-
-##OpenVMS system disk backup
 In order to safeguard against loss or corruption of relevant information of the
 system, or to periodically archive copies of the most important (configuration)
 files, a backup of the data is needed. The resulting archives may be used to
