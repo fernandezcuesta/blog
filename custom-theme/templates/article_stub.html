@@ -21,7 +21,7 @@
             <div class="derecha{% if article.pinned %} pinned{% endif %} col-xs-10 col-md-10 col-lg-10">
                 {% if article['title'] -%}
                 <h1 class="title">
-                    <a href="javascript:javascript:history.go(-1)" rel="bookmark" title="{{ article.title }}">{{ article.title }}</a>
+                    <a href="javascript:javascript:history.go(-1)" rel="bookmark" title="{{ article.title|striptags }}">{{ article.title }}</a>
                 </h1>
                 {% endif %}
                 <section class="post_content">

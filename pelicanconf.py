@@ -49,7 +49,7 @@ DEFAULT_PAGINATION = 4
 RELATIVE_URLS = True
 
 THEME = 'custom-theme'
-PLUGIN_PATHS = ['plugins']
+PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['tipue_search', 'minify']
 
 DISPLAY_PAGES_ON_MENU = True

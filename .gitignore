@@ -1,8 +1,9 @@
 cache/
 __pycache__/
+pelican-plugins/
 *.pid
 *.tgz
-pelican-plugins/
 *~
 share/
 *.bak
+tmp/

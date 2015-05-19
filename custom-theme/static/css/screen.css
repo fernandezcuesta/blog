@@ -585,6 +585,10 @@ form.inline_edit {
    font-family: 'Oswald', 'Open Sans', sans-serif;
 }
 
+#tipue_search_input{
+   width: 100%;
+}
+
 .comments {
    margin: 0 0 0 3rem;
    overflow: hidden;

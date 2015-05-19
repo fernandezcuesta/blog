@@ -6,6 +6,7 @@ BASEDIR=$(CURDIR)
 INPUTDIR=$(BASEDIR)/content
 OUTPUTDIR=$(BASEDIR)/fernandezcuesta.github.io
 CONFFILE=$(BASEDIR)/pelicanconf.py
+
 PUBLISHCONF=$(BASEDIR)/publishconf.py
 
 PORT=4000
@@ -65,12 +66,12 @@ help:
 newpost:
 ifdef NAME
 	echo "Title: $(NAME)" >  $(INPUTDIR)/$(SLUG).$(EXT)
+	echo "Tags: "        >> $(INPUTDIR)$(SLUG).$(EXT)
+	echo "Status: draft" >> $(INPUTDIR)/$(SLUG).$(EXT)
 	echo "Date: $(DATE)" >> $(INPUTDIR)/$(SLUG).$(EXT)
-    echo "Status: draft" >> $(INPUTDIR)/$(SLUG).$(EXT)
-    echo "Tags: "        >> $(INPUTDIR)$(SLUG).$(EXT)
 	echo ""              >> $(INPUTDIR)/$(SLUG).$(EXT)
 	echo ""              >> $(INPUTDIR)/$(SLUG).$(EXT)
-	${EDITOR} ${INPUTDIR}/${SLUG}.${EXT}
+	${EDITOR} ${INPUTDIR}/${SLUG}.${EXT} &
 else
 	@echo 'Variable NAME is not defined.'
 	@echo 'Do make newpost NAME='"'"'Post Name'"'"
@@ -78,7 +79,7 @@ endif
 
 editpost:
 ifdef NAME
-	${EDITOR} ${INPUTDIR}/${SLUG}.${EXT}
+	${EDITOR} ${INPUTDIR}/${SLUG}.${EXT} &
 else
 	@echo 'Variable NAME is not defined.'
 	@echo 'Do make editpost NAME='"'"'Post Name'"'"

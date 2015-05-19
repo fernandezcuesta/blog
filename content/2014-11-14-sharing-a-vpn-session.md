@@ -25,10 +25,10 @@ laptop both for UDP and TCP.
 
 So at the end, the details (as an example) are:
 
-- My public IP: 1.1.1.1
-- Open port to my system: 50000
-- Assigned IP address from the VPN tunnel: 10.200.100.5
-- Remote system reachable from the IPSec tunnel: 10.200.0.1
+- My public IP: `1.1.1.1`
+- Open port to my system: `50000`
+- Assigned IP address from the VPN tunnel: `10.200.100.5`
+- Remote system reachable from the IPSec tunnel: `10.200.0.1`
 
 The <u>**simplest option**</u> is taking advantage of OpenSSH's ability to forward
 incoming connections into the SSH tunnel:
@@ -46,7 +46,7 @@ Having a look at iptables flowchart, we may figure out what we need to set it
 up by following the upper side of the
 [chart](http://www.fclose.com/816/port-forwarding-using-iptables/).
 
-    #!text
+    :::text
     PACKET IN
         |
     PREROUTING--[routing]-->--FORWARD-->--POSTROUTING-->--OUT
@@ -67,7 +67,7 @@ to the remote system port 22 (SSH).
         $ iptables -t nat -A PREROUTING -p tcp --dport 50000 -j DNAT --to \
         > 10.200.0.1:22 -m comment --comment 'Redirect in 50000 to 10.200.0.1:22'
 
-- FORWARD rule to allow this traffic flow between interfaces (eth0 and tun0).
+- FORWARD rule to allow this traffic flow between interfaces (`eth0` and `tun0`).
 
         :::bash
         $ iptables -I FORWARD -p tcp --dst 10.200.0.1 --dport 22 -j ACCEPT

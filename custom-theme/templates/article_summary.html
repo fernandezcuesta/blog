@@ -24,7 +24,7 @@
             <div class="derecha{% if article.pinned %} pinned{% endif %} col-xs-10 col-md-10 col-lg-10">
                 {% if article['title'] -%}
                 <h1 class="title">
-                    <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Read full article: &quot;{{ article.title }}&quot;">{{ article.title }}</a>
+                    <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Read full article: &quot;{{ article.title|striptags }}&quot;">{{ article.title|striptags }}</a>
                 </h1>
                 {% endif %}
                 <section class="post_content">

@@ -76,7 +76,7 @@ to clip all entries with an absolute value >2 to exactly +/- 2.00.
     6  0.440051 -1.022366  1.807089 -0.442707  system2
     7 -0.890141  2.000000  0.959767 -0.627261  system1i
 
-Or directly using np.where:
+Or directly using `np.where`:
 
     :::python
     numeric = df.columns - ['ID']

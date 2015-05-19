@@ -16,27 +16,28 @@ As an example, let's assume the index being the sample indicator. For simplicity
 all the tests are done with these dataframes:
 
 
-```python
-df_a = pd.DataFrame({'sample_nr': [0, 1, 2, 3],
-                     'val0': [2, 3, 6, 8],
-                     'val1': [1, 2, 4, 3]})
-df_a = df_a.set_index('sample_nr')
+    :::python
+    df_a = pd.DataFrame({'sample_nr': [0, 1, 2, 3],
+                         'val0': [2, 3, 6, 8],
+                         'val1': [1, 2, 4, 3]})
+    df_a = df_a.set_index('sample_nr')
+    
+    df_b = pd.DataFrame({'sample_nr': [10, 11, 12, 13],
+                         'val2': [5, 4, 5, 5],
+                         'val3': [4, 4, 6, 6]})
+    df_b = df_b.set_index('sample_nr')
+    
+    df_c = pd.DataFrame({'sample_nr': [10, 11, 12, 13],
+                         'val0': [1, 3, 2, 1],
+                         'val1': [0, 2, 3, 4]})
+    df_c = df_c.set_index('sample_nr')
+    
+    df_d = pd.DataFrame({'sample_nr': [0, 1, 2, 3],
+                         'val2': [8, 8, 7, 7],
+                         'val3': [4, 4, 6, 6]})
+    df_d = df_d.set_index('sample_nr')
 
-df_b = pd.DataFrame({'sample_nr': [10, 11, 12, 13],
-                     'val2': [5, 4, 5, 5],
-                     'val3': [4, 4, 6, 6]})
-df_b = df_b.set_index('sample_nr')
-
-df_c = pd.DataFrame({'sample_nr': [10, 11, 12, 13],
-                     'val0': [1, 3, 2, 1],
-                     'val1': [0, 2, 3, 4]})
-df_c = df_c.set_index('sample_nr')
-
-df_d = pd.DataFrame({'sample_nr': [0, 1, 2, 3],
-                     'val2': [8, 8, 7, 7],
-                     'val3': [4, 4, 6, 6]})
-df_d = df_d.set_index('sample_nr')
-
+Which has as result:
 
     df_a:                         df_b:
                val0  val1                   val2  val3
@@ -54,7 +55,7 @@ df_d = df_d.set_index('sample_nr')
     11            3     2    1             8     4
     12            2     3    2             7     6
     13            1     4    3             7     6
-```
+
 
 
 The result of glueing everything together is:
@@ -78,11 +79,10 @@ At this point, I found two options:
 
 The latter was at first glance the simplest choice:
 
-```python
-df = pd.DataFrame()
-for _df in [df_a, df_b, df_c, df_d]:
-    df = df.combine_first(_df)
-```
+    :::python
+    df = pd.DataFrame()
+    for _df in [df_a, df_b, df_c, df_d]:
+        df = df.combine_first(_df)
 
 which produces the desired output:
 
@@ -102,9 +102,8 @@ which produces the desired output:
 The first option was, however, my choice due to the way that input data is
 obtained:
 
-```python
-df = pd.concat([dataframize(a_file) for a_file in files], axis=0)
-```
+    :::python
+    df = pd.concat([dataframize(a_file) for a_file in files], axis=0)
 
 Where `dataframize` simply takes an input CSV and returns a pd.DataFrame()
 object.
@@ -133,11 +132,10 @@ values are empty).
 
 So at the end this was the code used:
 
-```python
-df = pd.concat([dataframize(a_file) for a_file in files], axis=0)
-# properly merge the columns and restore the metadata
-_df = _df.groupby(_df.index).last()
-```
+    :::python
+    df = pd.concat([dataframize(a_file) for a_file in files], axis=0)
+    # properly merge the columns and restore the metadata
+    _df = _df.groupby(_df.index).last()
 
 The real reason of why choosing this and not `pd.combine_first`... maybe
 in a future post.
