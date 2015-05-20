@@ -659,7 +659,7 @@ right: 2vw;
    margin: 0px;
 }
 
-
+/* Responsive stuff */
 @media only screen and (max-width: 767px) {
    body {font-size:80%;}
    h2 {margin-left: -0.6rem;}
@@ -672,6 +672,7 @@ right: 2vw;
    .post_content{width:98%;}
    .highlight{max-width:100%;padding-left:1px;}
    .license{width: -webkit-calc(99% - 100px);width: -moz-calc(100% - 100px);width: -o-calc(100% - 100px);width: calc(100% - 100px);}
+   .fa{padding-top:2.2em;}
 }
 
 .navbar-toggle{
