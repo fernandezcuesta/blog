@@ -586,9 +586,9 @@ form.inline_edit {
 }
 
 #searchbox{
-position: fixed;
+position: absolute;
 top: 1vh;
-right: 7vh;
+right: 2vw;
 }
 
 #tipue_search_warning, #tipue_search_results_count{
