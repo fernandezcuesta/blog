@@ -39,8 +39,8 @@ AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
 # Social widget
-SOCIAL = (('Google+', 'https://plus.google.com/+JMFernándezC'),
-          ('github', 'https://github.com/fernandezcuesta/'),)
+SOCIAL = (('Google+', 'https://plus.google.com/+JMFernándezC', 'fa-google-plus-square'),
+          ('github', 'https://github.com/fernandezcuesta/', 'fa-github-square'),)
 ABOUT_URL = 'https://about.me/fernandez.cuesta'
 
 DEFAULT_PAGINATION = 4

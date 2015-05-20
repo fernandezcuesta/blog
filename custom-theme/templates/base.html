@@ -31,9 +31,7 @@
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/screen.css" type="text/css" />
     <link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments.css" type="text/css" />
-<!--
-    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/font-awesome.min.css" type="text/css"> 
--->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 {% block scripts %}
     <script src="{{ SITEURL }}/theme/js/jquery.min.js"></script>
@@ -87,15 +85,16 @@
 
                     <li {%- if output_file == "archives.html" %} class="selected"{% endif %}><a href="{{ SITEURL }}/archives.html">Archives</a></li>
                     {% if ABOUT_URL %}<li><a href="{{ ABOUT_URL }}">About</a></li>{% endif %}
-                    {%- block ephemeral_nav %}{%- endblock %}
+                    <li>{% for soc_item in SOCIAL %}<a class="social" href="{{ soc_item[1] }}"><i class="fa {{ soc_item[2] }} fa-2x" title="{{ soc_item[0] }}"></i></a>{% endfor %}</li>
+                </ul>
+{%- block ephemeral_nav %}{%- endblock %}
 {% if 'tipue_search' in PLUGINS %}
-        <li class="row navbar-header navbar-right">
+          <div class="row navbar-header navbar-right" id="searchbox">
             <form action="search.html">
               <input type="text" name="q" id="tipue_search_input" autocomplete="off" required>
             </form>
-        </li>
+          </div>
 {% endif %}
-                </ul>
 
              </div>
          </div>

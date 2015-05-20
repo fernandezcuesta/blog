@@ -343,11 +343,16 @@ form.inline_edit {
 #nav li {
 	float: left;
 	}
-#nav a {
+#nav a:not(.social){
 	display: block;
 	padding: 4.5em 10px 10px 10px;
 	}
-#nav a:hover {
+
+.fa {
+    padding: 2em 0 0 20px;
+}
+
+#nav a:hover:not(.social) {
 	background-color: #777;
     color: #fafafa;
 	}
@@ -580,6 +585,12 @@ form.inline_edit {
    float: right;
 }
 
+#searchbox{
+position: fixed;
+top: 1vh;
+right: 7vh;
+}
+
 #tipue_search_warning, #tipue_search_results_count{
    font-size: 30px;
    font-family: 'Oswald', 'Open Sans', sans-serif;
@@ -671,6 +682,7 @@ form.inline_edit {
     background-color: black;
     height: 5px;
 }
+
 
 /* Text selection */
 
