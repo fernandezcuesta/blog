@@ -1,11 +1,10 @@
-#!/data/virtualenv/sysnotes/bin/python3
-
-# -*- coding: utf-8 -*-
-import re
+#!/data/virtualenv/sysnotes/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'pelican==3.5.0','console_scripts','pelican-themes'
+__requires__ = 'pelican==3.5.0'
 import sys
-
-from pelican.tools.pelican_themes import main
+from pkg_resources import load_entry_point
 
 if __name__ == '__main__':
-    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    sys.exit(main())
+    sys.exit(
+        load_entry_point('pelican==3.5.0', 'console_scripts', 'pelican-themes')()
+    )
