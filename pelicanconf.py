@@ -50,7 +50,7 @@ RELATIVE_URLS = True
 
 THEME = 'calepin'
 PLUGIN_PATHS = ['pelican-plugins']
-PLUGINS = ['tipue_search', 'minify']
+PLUGINS = ['tipue_search', 'minify', 'tag_cloud']
 
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = False

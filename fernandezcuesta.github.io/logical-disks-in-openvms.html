@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang=en><head><title>sys$notes &middot; Logical disks in&nbsp;OpenVMS</title><meta http-equiv=Content-type content="text/html; charset=utf-8"><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><link rel="shortcut icon" href=./theme/images/favicon.ico type=image/x-icon><meta name=author content="J.M. Fernández"><link href=./theme/tipuesearch/tipuesearch.css rel=stylesheet><link rel=stylesheet href=./theme/css/bootstrap.min.css type=text/css><link rel=stylesheet href=./theme/css/calepin.css type=text/css><link rel=stylesheet href=./theme/css/pygments.css type=text/css><link rel=stylesheet href=//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css><script src=./theme/js/jquery.min.js></script><script src=./theme/js/bootstrap.min.js></script><script src=./theme/js/respond.min.js></script><script type=text/javascript>
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script><script type=text/javascript>
+    try {
+        var pageTracker = _gat._getTracker("UA-56464775-1");
+    pageTracker._trackPageview();
+    } catch(err) {}</script></head><body><nav class="navbar navbar-static-top" role=navigation><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=.navbar-collapse><span class=sr-only>Toggle navigation</span><span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><div class="navbar-collapse collapse"><div id=header><div class="col-xs-5 col-md-6 col-lg-6 header_box"><ul><li class=headsubtitle>yet another personal blog</li><li class=headtitle><a href=.><img src=./theme/images/title.png alt=sys$notes></a></li></ul></div><div class="col-xs-6 col-md-5 col-lg-5 header_controls"><ul id=nav><li><a href=.>Home</a></li><li><a href=./archives.html>Archives</a></li><li><a href=https://about.me/fernandez.cuesta>About</a></li><li><a class=social href=https://plus.google.com/+JMFernándezC><i class="fa fa-google-plus-square fa-2x" title=google-plus></i></a><a class=social href=https://github.com/fernandezcuesta/><i class="fa fa-github-square fa-2x" title=github></i></a></li></ul><div class="row navbar-header navbar-right" id=searchbox><form action=search.html><input type=text name=q id=tipue_search_input autocomplete=off required></form></div></div></div></div></nav><div class=container><div id=content><div class=row><div class="col-xs-12 col-md-12 col-lg-12"></div></div><div class="row post"><div class="izquierda col-xs-2 col-md-2 col-lg-2"><div class=date><div class=dateday>30 Oct</div><div class=datemonth>2014</div></div><div class=tags><ul><li><a href=./tag/openvms.html>OpenVMS</a></li></ul></div></div><div class="derecha col-xs-10 col-md-10 col-lg-10"><h1 class=title><a href=javascript:javascript:history.go(-1) rel=bookmark title="Logical disks in OpenVMS">Logical disks in&nbsp;OpenVMS</a></h1><section class=post_content><p>There are situations where an operator wants to run some custom scripts on their systems. These scripts might not be fully optimized and be the root cause for bigger problems in the overall system behaviour. It is also quite common to be asked for a way to <em>&lsquo;restrict&rsquo;</em> the amount of log or output files that a script can generate, in a way that the main services running on the system are not affected by a lack of&nbsp;space.</p><p>A way to manage this is by controlling the number of log or output files to be written to a specific directory. This can be done with the <code>SET DIRECTORY /VERSION_LIMIT</code> or even for individual files with <code>SET FILE /VERSION_LIMIT</code> commands.</p><p>Another way to accomplish it is by defining a <strong>Logical Disk (<span class=caps>LD</span>)</strong>.</p><p><u><strong>LDdriver</strong></u> allows OpenVMS to create a logical volume that physically resides on a single file. Similar to loop devices on Linux. The size of the virtual volume can be as big as the real volume where the file is saved can&nbsp;store.</p><p>A couple of use&nbsp;cases:</p><ul><li><p>Burn a <span class=caps>CD</span> with an OpenVMS directory structure. Create a <span class=caps>LD</span>, mount it, copy directories to virtual volume and disconnect. The container file can now be burnt to a <span class=caps>CD</span>.</p></li><li><p>Shrink a script not to fill up a disk. Assign the working directory to a <span class=caps>LD</span> with a specific size. Even if the virtual volume is 100% full, the real disk will not be affected (think about a <span class=caps>8GB</span> virtual disk residing on a <span class=caps>100GB</span>&nbsp;volume).</p><div class=highlight><pre>&gt; ld help
+
+ LD
+
+ The logical disk utility is a system management tool available to any user for controlling logical disk usage.
+ A Logical Disk is a file available on a Physical Disk, which acts as a real Physical Disk (the file may or may not be contiguous).
+ The Logical Disks are available in any directory of the Physical Disk.
+ A large disk can be divided into smaller sections, each a Logical Disk, supporting the same I/O functions as the Physical Disk.
+ By giving the Logical Disk File a good protection level and mounting it private or with device protection, you are able to add a number of protection
+ levels to your file system.
+ The logical disk is controlled by the LD utility, which can be directly invoked from DCL.
+
+Format:
+
+LD [/qualifiers] [Filespec] [Device]
+
+Additional information available:
+
+Author Command_summary Driver_functions Error_messages
+Features HELP New_features_V5.0 New_features_V5.1
+New_features_V6.0 New_features_V6.2 New_features_V6.3
+New_features_V7.0 New_features_V8.0 New_features_V8.1
+New_features_V8.2 Parameters Privileges_and_Quotas Restrictions
+Setup IO_Trace_example CONNECT CREATE DISCONNECT NOPROTECT
+NOWATCH SHOW TRACE NOTRACE PROTECT WATCH VERSION
+</pre></div></li></ul><h2>Example</h2><ul><li><p>Add the startup procedures to the <code>SYS$STARTUP:SYSTARTUP_VMS.COM</code></p><div class=highlight><pre><span class=nv>$ </span>If f<span class=nv>$search</span><span class=o>(</span><span class=s2>&quot;sys</span><span class=nv>$startup</span><span class=s2>:ld</span><span class=nv>$startup</span><span class=s2>.com&quot;</span><span class=o>)</span> .nes. Then @SYS<span class=nv>$STARTUP</span>:LD<span class=nv>$STARTUP</span>
+</pre></div><blockquote><p>Note that this will be executed during system boot. If a reboot is not possible, invoke it manually from the system prompt with <code>@SYS$STARTUP:LD$STARTUP</code>, then continue with the next&nbsp;steps</p></blockquote></li><li><p>Create a 100MBlock (<span class=caps>40MB</span>) logical drive&nbsp;file</p><div class=highlight><pre><span class=x>&gt; ld create </span><span class=p>$</span><span class=x>1</span><span class=p>$</span><span class=nv>dga200</span><span class=x>:[repository]ldisk1.dsk /size=100000 /nobackup [/contiguous]</span>
+</pre></div></li><li><p>Connect</p><div class=highlight><pre><span class=o>&gt;</span> <span class=nt>ld</span> <span class=nt>connect</span> <span class=o>$</span><span class=nt>1</span><span class=o>$</span><span class=nt>dga200</span><span class=nd>:</span><span class=cp>[</span><span class=nx>repository</span><span class=cp>]</span><span class=nd>ldisk1</span><span class=nc>.dsk</span> <span class=cp>[</span><span class=nx>lda1</span><span class=p>:</span><span class=cp>]</span> <span class=cp>[</span><span class=p>/</span><span class=nx>share</span><span class=cp>]</span>
+<span class=o>%</span><span class=nt>LD-I-UNIT</span><span class=o>,</span> <span class=nt>Allocated</span> <span class=nt>device</span> <span class=nt>is</span> <span class=o>$</span><span class=nt>1</span><span class=o>$</span><span class=nt>LDA1</span><span class=o>:</span>
+
+<span class=o>&gt;</span> <span class=nt>ld</span> <span class=nt>show</span> <span class=nt>lda1</span><span class=o>:</span>
+<span class=o>%</span><span class=nt>LD-I-CONNECTED</span><span class=o>,</span> <span class=nt>Connected</span> <span class=o>$</span><span class=nt>1</span><span class=o>$</span><span class=nt>LDA1</span><span class=o>:</span> <span class=nt>to</span> <span class=o>$</span><span class=nt>1</span><span class=o>$</span><span class=nt>dga200</span><span class=nd>:</span><span class=cp>[</span><span class=nx>repository</span><span class=cp>]</span><span class=nd>ldisk1</span><span class=nc>.dsk</span><span class=o>;</span><span class=nt>1</span>
+</pre></div></li><li><p>Initialize the logical drive with <code>/erase</code> parameter in order to erase any potentially sensitive data on the underlying disk&nbsp;device.</p><div class=highlight><pre><span class=x>&gt; initialize /erase lda1: ldisk1_label</span>
+<span class=x>&gt; mount /over=id lda1:</span>
+<span class=x>&gt; show dev lda1</span>
+
+<span class=x>Device Device Error Volume Free Trans Mnt</span>
+<span class=x>Name Status Count Label Blocks Count Cnt</span>
+<span class=p>$</span><span class=x>1</span><span class=p>$</span><span class=nv>LDA1</span><span class=x>: (MIKO) Mounted alloc 0 LDISK1 99900 1 1</span>
+
+<span class=x>&gt; dismount lda1:</span>
+<span class=x>&gt; ld disconnect lda1: /log</span>
+</pre></div></li><li><p>Set the logical disk to mount automatically during&nbsp;startup</p><p>As previously done for the <span class=caps>LD</span> driver startup, we can add the commands for connecting and mounting the logical disks, provided that they were successfully&nbsp;created.</p><p>This is an example of all the lines added to the end of <code>SYS$STARTUP:SYSTARTUP_VMS.COM</code>:</p><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class=code><div class=highlight><pre><span class=p>$</span><span class=x>!</span>
+<span class=p>$</span><span class=x> If f</span><span class=p>$</span><span class=nv>search</span><span class=p>(</span><span class=s2>&quot;sys$startup:ld$startup.com&quot;</span><span class=p>)</span><span class=x> .nes. Then @SYS</span><span class=p>$</span><span class=nv>STARTUP</span><span class=x>:LD</span><span class=p>$</span><span class=nv>STARTUP</span><span class=x></span>
+<span class=p>$</span><span class=x>!</span>
+<span class=p>$</span><span class=x>! Optional: for Logical Magnetic tapes (LM)</span>
+<span class=p>$</span><span class=x>! If f</span><span class=p>$</span><span class=nv>search</span><span class=p>(</span><span class=s2>&quot;sys$startup:lm$startup.com&quot;</span><span class=p>)</span><span class=x> .nes. &quot;&quot;</span>
+<span class=p>$</span><span class=x>! Then</span>
+<span class=p>$</span><span class=x>! @SYS</span><span class=p>$</span><span class=nv>STARTUP</span><span class=x>:LM</span><span class=p>$</span><span class=nv>STARTUP</span><span class=x></span>
+<span class=p>$</span><span class=x>! Endif</span>
+<span class=p>$</span><span class=x>!</span>
+<span class=p>$</span><span class=x> If f</span><span class=p>$</span><span class=nv>search</span><span class=p>(</span><span class=s2>&quot;dsa4:[000000]SCRIPT_LD.DSK&quot;</span><span class=p>)</span><span class=x> .nes. &quot;&quot;</span>
+<span class=p>$</span><span class=x> Then</span>
+<span class=p>$</span><span class=x> ld connect dsa4:[000000]SCRIPT_LD.DSK lda1: /share</span>
+<span class=p>$</span><span class=x> mount </span><span class=p>$</span><span class=x>1</span><span class=p>$</span><span class=nv>lda1</span><span class=x>: SCRIPT_LD /system /cluster</span>
+<span class=p>$</span><span class=x> Endif</span>
+<span class=p>$</span><span class=x>!</span>
+<span class=p>$</span><span class=x> If f</span><span class=p>$</span><span class=nv>search</span><span class=p>(</span><span class=s2>&quot;dsa4:[000000]T4$DATA.DSK&quot;</span><span class=p>)</span><span class=x> .nes. &quot;&quot;</span>
+<span class=p>$</span><span class=x> Then</span>
+<span class=p>$</span><span class=x> ld connect dsa4:[000000]T4</span><span class=p>$</span><span class=nv>DATA</span><span class=p>.</span><span class=nv>DSK</span><span class=x> lda2: /share</span>
+<span class=p>$</span><span class=x> mount </span><span class=p>$</span><span class=x>1</span><span class=p>$</span><span class=nv>lda2</span><span class=x>: T4</span><span class=p>$</span><span class=nv>DATA</span><span class=x> /system /cluster</span>
+<span class=p>$</span><span class=x> Endif</span>
+<span class=p>$</span><span class=x>!</span>
+</pre></div></td></tr></table></li></ul></section><div class=clear></div><div class=row><div class="col-xs-3 col-md-2 col-lg-2 archives izquierda"></div><div class="col-xs-8 col-md-9 col-lg-9 post archives"><a class=more href=javascript:javascript:history.go(-1)>&#8672;&nbsp;BACK&nbsp;&#8672;</a></div></div></div></div><div class=comments><div class="row post"><div class="col-xs-10 col-md-10 col-lg-10 comments_content comments_header"><h2>Leave your comments:</h2></div><div class="col-xs-2 col-md-2 col-lg-2 comments_corner"></div></div><div class="row flex-row"><div class="col-xs-10 col-md-10 col-lg-10 comments_content"><div id=disqus_thread><script type=text/javascript>
+                       var disqus_identifier = "logical-disks-in-openvms.html";
+                       (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                       dsq.src = 'http://vt100.disqus.com/embed.js';
+                       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                      })();
+                    </script></div></div><div class=comments_side></div></div></div><div class=spacer></div><div class=clear></div></div><div class=row id=footer><div class=license_img><a rel=license href=http://creativecommons.org/licenses/by/4.0/><img alt="Creative Commons Attribution 4.0 International License" style=border-width:0 src=https://i.creativecommons.org/l/by/4.0/88x31.png></a></div><div class=license><div><span xmlns:dct=http://purl.org/dc/terms/ property=dct:title><strong>sys$notes</strong></span> is licensed under a <a rel=license href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License</a></div><div><p>Powered by <a href=http://getpelican.com>Pelican</a>&nbsp;&middot;&nbsp;Calepin theme inspired by <a href=https://github.com/wrl/pelican-mockingbird>Mockingbird by Nevan Scott</a></p></div></div></div><div class=clear></div></div></body></html>

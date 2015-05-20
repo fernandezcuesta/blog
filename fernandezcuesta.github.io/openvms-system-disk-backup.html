@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang=en><head><title>sys$notes &middot; OpenVMS system disk&nbsp;backup</title><meta http-equiv=Content-type content="text/html; charset=utf-8"><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><link rel="shortcut icon" href=./theme/images/favicon.ico type=image/x-icon><meta name=author content="J.M. Fernández"><link href=./theme/tipuesearch/tipuesearch.css rel=stylesheet><link rel=stylesheet href=./theme/css/bootstrap.min.css type=text/css><link rel=stylesheet href=./theme/css/calepin.css type=text/css><link rel=stylesheet href=./theme/css/pygments.css type=text/css><link rel=stylesheet href=//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css><script src=./theme/js/jquery.min.js></script><script src=./theme/js/bootstrap.min.js></script><script src=./theme/js/respond.min.js></script><script type=text/javascript>
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script><script type=text/javascript>
+    try {
+        var pageTracker = _gat._getTracker("UA-56464775-1");
+    pageTracker._trackPageview();
+    } catch(err) {}</script></head><body><nav class="navbar navbar-static-top" role=navigation><div class=navbar-header><button type=button class=navbar-toggle data-toggle=collapse data-target=.navbar-collapse><span class=sr-only>Toggle navigation</span><span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><div class="navbar-collapse collapse"><div id=header><div class="col-xs-5 col-md-6 col-lg-6 header_box"><ul><li class=headsubtitle>yet another personal blog</li><li class=headtitle><a href=.><img src=./theme/images/title.png alt=sys$notes></a></li></ul></div><div class="col-xs-6 col-md-5 col-lg-5 header_controls"><ul id=nav><li><a href=.>Home</a></li><li><a href=./archives.html>Archives</a></li><li><a href=https://about.me/fernandez.cuesta>About</a></li><li><a class=social href=https://plus.google.com/+JMFernándezC><i class="fa fa-google-plus-square fa-2x" title=google-plus></i></a><a class=social href=https://github.com/fernandezcuesta/><i class="fa fa-github-square fa-2x" title=github></i></a></li></ul><div class="row navbar-header navbar-right" id=searchbox><form action=search.html><input type=text name=q id=tipue_search_input autocomplete=off required></form></div></div></div></div></nav><div class=container><div id=content><div class=row><div class="col-xs-12 col-md-12 col-lg-12"></div></div><div class="row post"><div class="izquierda col-xs-2 col-md-2 col-lg-2"><div class=date><div class=dateday>Mon 05</div><div class=datemonth>Jan</div></div><div class=tags><ul><li><a href=./tag/openvms.html>OpenVMS</a></li></ul></div></div><div class="derecha col-xs-10 col-md-10 col-lg-10"><h1 class=title><a href=javascript:javascript:history.go(-1) rel=bookmark title="OpenVMS system disk backup">OpenVMS system disk&nbsp;backup</a></h1><section class=post_content><p>Wrapper for doing automatic backups of the system unit (<code>DSA0:</code>) in OpenVMS. In a&nbsp;nutshell:</p><ul><li>It assumes that <span class=caps>OS</span> is installed in <code>DSA0:</code> unit.</li><li>This script is basically invoking the OpenVMS&rsquo;<code>backup</code> command.</li><li>The resulting file is always stored locally (where configured) and transferred via s/<span class=caps>FTP</span> to a remote <span class=caps>SAN</span>.</li><li>Full and incremental/daily backups can be&nbsp;done.</li><li>Script takes care of housekeeping according to configured&nbsp;values.</li></ul><p>In order to safeguard against loss or corruption of relevant information of the system, or to periodically archive copies of the most important (configuration) files, a backup of the data is needed. The resulting archives may be used to recover the original information after a disaster (for example if system disk is damaged), or to restore data from an earlier&nbsp;time.</p><p>OpenVMS provides several ways to backup files, being the embedded backup tool the most powerful and widely used. Using this tool an operator&nbsp;can:</p><ul><li>Make image backups of a unit (snapshots of the whole content of a disk volume). In the case of the system unit, the bootstrap data is saved in the&nbsp;archive.</li><li>Make file based backups (archive of selected folders and files). No bootstrap data is usually saved in file based&nbsp;backups.</li><li>Optionally a <span class=caps>DB</span> backup (Oracle <span class=caps>RDB</span> or Mimer) will be done online into a file saved in system unit (inside <code>DSA0:[BACKUP]</code> folder). In some systems, this <span class=caps>DB</span> already resides in the system unit and this step is not necessary (but may be&nbsp;forced).</li><li>No other data is backed&nbsp;up.</li></ul><p>In order to speed the process up and minimize the impact on size and bandwidth needed to store and transfer the resulting archives into the data warehouse, it is recommended to keep the system unit&nbsp;clean.</p><p>The procedure described in the following chapters defines how to make a backup of the system volume to a separate disk, and how to roll back in case of the system disk needs to be restored to a previous state. In the following examples, a full backup of the system volume to the spare <span class=caps>SAS</span> disk <code>DKA200</code> is done, together with it an online backup of the&nbsp;database.</p><blockquote><p><strong><u><span class=caps>NOTE</span></u>:</strong> The spare disk available for the backup might be different from <code>DKA200</code> as used for the examples. Please adjust according to your system’s&nbsp;configuration.</p></blockquote><p>Later on, the opposite operation for restoring data from a backup archive will be described, as well as some troubleshooting guidelines on booting from a minimal OpenVMS unit (referred to as emergency&nbsp;boot).</p><blockquote><p><strong><span class=caps>IMPORTANT</span></strong>: The backup procedures are to be executed with the same user (i.e. <span class=caps>SYSTEM</span>) as specified for each&nbsp;command.</p></blockquote><h1>1.&nbsp;Preparations</h1><h2>1.1 Prepare target&nbsp;disk</h2><p>The target disk can be either one of the local <span class=caps>SAS</span> disks on each node or a shared disk from the <span class=caps>SAN</span>. If the target disk is not bootable, proceed as follows. It is also possible to use a <strong><span class=caps>LD</span> device</strong> as&nbsp;destination.</p><p>Initialize the disk and make it bootable (will delete all its contents!). Do not use any reserve word as system label (i.e. <code>backup</code> or any other known command). Refer to <strong>Troubleshooting</strong> chapter for further&nbsp;details.</p><p>Destination volume must be initialized and&nbsp;mounted:</p><ul><li><p>Alpha:</p><div class=highlight><pre>SYSTEM&gt; INITIALIZE /NOHIGH/cluster=16/extension=256/header=8000 DKA200: BCK_DSK
+SYSTEM&gt; MOUNT /OVERRIDE=IDENTIFICATION DKA200
+SYSTEM&gt; @SYS$SYSTEM:AXPVMS$PCSI_INSTALL_MIN
+Enter device name for target disk: (? for choices) DKA200
+Do you want to create <span class=nb>or </span>validate boot options? (Yes/No) Yes
+</pre></div></li><li><p>Itanium:</p><div class=highlight><pre>SYSTEM&gt; INITIALIZE /NOHIGH/cluster=64/extension=256/header=8000 DKA200: BCK_DSK
+SYSTEM&gt; MOUNT /OVERRIDE=IDENTIFICATION DKA200
+SYSTEM&gt; @SYS$SYSTEM:I64VMS$PCSI_INSTALL_MIN
+Enter device name for target disk: (? for choices) DKA200
+Do you want to create <span class=nb>or </span>validate boot options? (Yes/No) Yes
+</pre></div></li></ul><p>If the destination disk is labeled <code>BCK_DSK</code>, the script will automatically put the backup archives inside a <code>BACKUP</code> directory in it. This is the easiest way to proceed when working with local disks: units should have the same name from every node in the cluster, even if they are not labeled or identified the same (for example, disks located in different bay numbers will get different&nbsp;naming).</p><p>If there is an already initialized unit in place, this same behaviour can be achieved by setting a logical name pointing to its&nbsp;label.</p><p>This logical name definition may be added to <code>sys$startup:sylogicals.com</code> file.</p><p>The logical must be defined <strong>on each node in the cluster</strong>. It is very important to use the translation_attribute qualifier as well as the ending &lsquo;:&rsquo; sign in the target unit. For&nbsp;example:</p><div class=highlight><pre>SYSTEM&gt; define /translation_attributes=conceal /system /exec BCK_DSK DAT0:
+</pre></div><p>Finally, copy the <span class=caps>ZIP</span> and <span class=caps>UNZIP</span> binaries to the emergency disk as&nbsp;follows:</p><div class=highlight><pre>SYSTEM&gt; <span class=nb>copy </span>/log *ZIP.EXE DKA200:[000000]
+</pre></div><blockquote><p><strong><u>Note</u>:</strong> doublecheck that the versions of <span class=caps>ZIP</span> and <span class=caps>UNZIP</span> are supported as explained in&nbsp;1.3.</p></blockquote><h2>1.2 System disk&nbsp;cleanup</h2><p>To speed up the overall process, it is recommended to first clean up the system disk by purging unnecessary files. As an example, purge files with extension log or tmp older than one week and look for files larger than 100000 blocks (5 <span class=caps>MB</span>):</p><div class=highlight><pre>SYSTEM&gt; purge /log dsa0:[000000...]*.log,*.tmp /keep=7
+SYSTEM&gt; MC DFU search /size=minimum=10000 dsa0
+</pre></div><p>You may also set some backups which don&rsquo;t need to be backed up with the following&nbsp;command:</p><div class=highlight><pre>SYSTEM&gt; <span class=nb>set </span>file /nobackup sys$system:pagefile.sys
+</pre></div><h2>1.3 Required third-party&nbsp;tools</h2><p>Verify on the system that the <span class=caps>ZIP</span> and <span class=caps>UNZIP</span> tools are installed and its versions are newer or equal than those specified below. These versions are needed to pack files &gt;<span class=caps>2GB</span> in <span class=caps>UNIX</span> compatible&nbsp;format.</p><ul><li><code>ZIP.EXE</code> v3.0 or&nbsp;higher</li><li><code>UNZIP.EXE</code> v6.0 or&nbsp;higher</li></ul><p>To verify which version is&nbsp;installed:</p><div class=highlight><pre>SYSTEM&gt; <span class=nb>zip</span>
+Copyright (c) 1990-2008 Info-ZIP <span class=nb>- </span>Type &#39;zip <span class=s>&quot;-L&quot;</span>&#39; for software license.
+Zip <span class=m>3.0 </span>(July 5th 2008). Usage: <span class=nb>zip </span>== <span class=s>&quot;$ disk:[dir]zip.exe&quot;</span>
+
+SYSTEM&gt; <span class=nb>unzip</span>
+UnZip <span class=m>6.00 </span><span class=nb>of </span><span class=m>20 </span>April 2009, by Info-ZIP. For more details see: <span class=nb>unzip </span>-v.
+</pre></div><p>Latest versions can be downloaded from <a href=ftp://ftp.info-zip.org/pub/infozip/vms/>ftp.info-zip.org/pub/infozip/vms/</a>.</p><h2>1.4 Export <span class=caps>SSH</span> public&nbsp;key</h2><p>If it is planned to send the resulting file to a remote server using <span class=caps>SFTP</span> with public key authentication as transference method, the public key of the system has to be sent to the remote server. First of all, ensure that public-key authentication is allowed by the <span class=caps>SSH</span> client on configuration file <code>TCPIP$SSH_DEVICE:[TCPIP$SSH.ssh2]ssh2_config.</code> by looking for the value of <code>AllowedAuthentications</code>.</p><p>Then identify the key that the client will use by&nbsp;doing:</p><div class=highlight><pre>SMSC&gt; type smsc$root:[ssh2]identification.
+IdKey ID_DSA_2048_A
+</pre></div><p>If there are no IdKey entries, generate a new key pair with the following command. Bear in mind that OpenVMS&rsquo; secure shell is based on <span class=caps>SSH2</span> and the key format differs from&nbsp;OpenSSH.</p><div class=highlight><pre>SMSC&gt; ssh_keygen -P mykey
+SMSC&gt; <span class=nb>set </span>file /protection=(S,W,G,O:RW) mykey
+</pre></div><p>Add the following entry to <code>IDENFITICATION.</code> file:</p><div class=highlight><pre>    [IDENTIFICATION.]
+    IdKey mykey
+</pre></div><p>Finally, transfer the <code>mykey.pub</code> file to the remote system and add it to the authorization&nbsp;file.</p><ul><li><p>OpenVMS (<span class=caps>SSH2</span>)</p><div class=highlight><pre><span class=nb>&gt; </span>SET FILE/PROTECTION=(S:WRED,O:WRED,G:RE,W:R) mykey.pub
+</pre></div><p>Add the following entry to the <code>[.ssh2]authorized.</code> file under <code>sys$login</code> directory:</p><div class=highlight><pre>IdKey mykey.pub
+</pre></div></li><li><p>Unix&nbsp;(OpenSSH) </p><div class=highlight><pre><span class=gp>$</span> ssh-keygen -i -f mykey.pub &gt;&gt; ~/.ssh/authorized_keys
+</pre></div></li></ul><h1>2. Creating the backup&nbsp;manually</h1><p>If the subscribers database (<span class=caps>SDB</span>) resides on the system disk, skip this step. Otherwise, create a Backup directory which will store the <span class=caps>RDB</span> backup&nbsp;file.</p><div class=highlight><pre>SYSTEM&gt; create /directory dsa0:[backup]
+</pre></div><h2>2.1 Perform a manual backup of the&nbsp;database</h2><p>You may skip this step if the subscriber database already resides in the system unit (<code>dsa0:</code>). This can be verified with the&nbsp;command:</p><div class=highlight><pre>SYSTEM&gt; show logical SMSC_RDB
+</pre></div><p>Subscriber database can be backed up online (without service interruption) directly from the command line as follows. In this example, it will be saved on <code>dsa0:[backup]</code>.</p><ul><li><p><strong>For Oracle <span class=caps>RDB</span></strong>:</p><div class=highlight><pre>SYSTEM&gt; RMU /backup/online smsc_db_sdb dsa0:[backup]smsc_db.rbf
+</pre></div></li><li><p><strong>For Mimer <span class=caps>DB</span></strong>:</p><div class=highlight><pre>SYSTEM&gt; @sbr$root:[scripts]bck_mimer_rdb dsa0:[backup]smsc_db.bck
+</pre></div></li></ul><h2>2.2 Perform a manual backup of the system&nbsp;unit</h2><p>Backups can be done directly from the command prompt as follows. In this example, dsa0 content will be backed up into <code>dat0:[backup]fulldsa0.bck</code> file.</p><div class=highlight><pre>SYSTEM&gt; backup /record/log/ignore=interlock/image/label=MANUAL_BCK dsa0:
+_SYSTEM&gt; dat0:[backup]fulldsa0.bck /save_set
+</pre></div><p>Save only the most recent version of&nbsp;files:</p><div class=highlight><pre>SYSTEM&gt; backup /record/log/ignore=interlock/image/label=LAST_VERS <span class=nb>-</span>
+_SYSTEM&gt; dsa0:[000000...]*.*; dat0:[backup]dsa0_lastv.bck /save_set
+</pre></div><p>Backup operation progress can be checked in the interactive session by pressing <code>Ctrl-T</code>.</p><p>Additionally on newer OpenVMS versions (≥8.x) platforms, a compression filter (<code>zlib</code>) can be applied while archiving the files by adding the <code>/data_format=compress</code> qualifier to the&nbsp;command.</p><h1>3. Running the backup&nbsp;automatically</h1><h2>3.1 Script&nbsp;configuration</h2><p>Configuration for the backup script is stored in <code>BACKUP_CONFIG.DAT</code> file, which should be placed in the same directory as the script (by default <code>DSA0:[BACKUP]</code>). If not present or empty records, default values are coded in the&nbsp;scripts.</p><p>See Appendix C for the settings file&nbsp;content.</p><h2>3.2 Backup&nbsp;script</h2><div class=highlight><pre>SMSC&gt; @dsa0:[backup]sys_backup [NOW]
+</pre></div><p>If run without parameters, it will assume that the backup will be performed next <code>Backup_day</code> at <code>Backup_hour</code> and will not resubmit&nbsp;itself.</p><p>With the optional parameter <code>NOW</code>, the script will schedule itself (almost) immediately with the settings configured in the <code>BACKUP_CONFIG.DAT</code> file.</p><blockquote><p><strong><u>Note</u>:</strong>: The script is scheduled with lower priority (3) than other applications; this means the backup will process if the system is not busy with higher priority tasks. At high load, backup may take longer than expected. It is recommended to set the backup time somewhere in the interval between <span class=caps>02AM</span> and <span class=caps>06AM</span>, since this is typically the interval with lower&nbsp;load.</p></blockquote><h2>3.3 Scheduling the backup&nbsp;automatically</h2><p>If run with&nbsp;parameter:</p><ul><li><strong>p1: Auto-submission&nbsp;(Yes/No)</strong></li></ul><p>It will wait for next <code>Backup_day</code> at <code>Backup_hour</code> to run (those two parameters are customizable in the script, by default next Monday <span class=caps>02AM</span>). If <code>p1</code> is set to &lsquo;Yes&rsquo;, it will be resubmitted automatically every <code>Backup_day</code> at <code>Backup_hour</code>.</p><p>For&nbsp;example:</p><div class=highlight><pre>SMSC&gt; @dsa0:[backup]SYS_BACKUP Yes
+</pre></div><p>Another option is to configure the desired value in the configuration&nbsp;file.</p><blockquote><p>Configuration item: <span class=caps>RESCHEDULE</span>&nbsp;(Yes,[No])</p></blockquote><h2>3.4 Incremental daily&nbsp;backups</h2><p>While having a weekly backup (or any other periodicity) it is also possible to have incremental backups with shorter period, such as daily&nbsp;backups.</p><p>If run with&nbsp;parameter:</p><ul><li><strong>p2: Incremental&nbsp;(Yes/No)</strong></li></ul><p>It can be specified that the backup to be performed is incremental (default: full backup). If set to do an incremental backup but no full backup was done before, then a full backup is made instead. When auto-submission is set, it will assume that a full backup will be done in a weekly basis (the day of the week when full backup is scheduled) while incremental backups are made the other days of the week. For&nbsp;example:</p><blockquote><p><strong><u>Note</u>:</strong>: the first parameter in this example was set to “default”. In that case, it will look for a valid value in the configuration file, or set the coded default value if not&nbsp;present.</p></blockquote><div class=highlight><pre>SMSC&gt; @dsa0:[backup]SYS_BACKUP default YES
+</pre></div><blockquote><p>Configuration item: <span class=caps>INCREMENTAL</span>&nbsp;(Yes,[No])</p></blockquote><h2>3.5 File transference&nbsp;method</h2><p>Once the backup is finished, the resulting archive can be sent to an external storage. Transference methods include <span class=caps>FTP</span> and <span class=caps>SFTP</span>, while the file can be also left as a <span class=caps>ZIP</span> archive to be pulled from an external system via any protocol that the host may accept (i.e. <span class=caps>SCP</span>, <span class=caps>RCP</span>, s/<span class=caps>FTP</span>,&nbsp;&hellip;).</p><p>This can be achieved by specifying a third&nbsp;parameter:</p><ul><li><strong>p3: File transfer {<span class=caps>FTP</span>, <span class=caps>SFTP</span>, <span class=caps>PULL</span>=None}</strong></li></ul><p><strong>Example:</strong></p><div class=highlight><pre>SMSC&gt; @dsa0:[backup]SYS_BACKUP default default SFTP
+</pre></div><h2>3.6 Customized backup&nbsp;location</h2><p>By default, script will look at drive labeled (or referred with a logical name) as <code>BCK_DSK</code>. However, a customized location may be specified rather than the coded&nbsp;one.</p><p>If run with&nbsp;parameter:</p><ul><li><strong>p4: Backup location (BCK_DSK:[<span class=caps>BACKUP</span>])</strong></li></ul><p>Then the backup will be performed in the specified directory. An example of specifying a destination folder&nbsp;follows:</p><div class=highlight><pre>SMSC&gt; @dsa0:[backup]SYS_BACKUP default default default DSA1:[BACKUP.DSA0BCK]
+</pre></div><h2>3.7 Exclude files from being backed&nbsp;up</h2><p>It is possible (but not recommended as will be explained) for the operator to discard some files that are not needed to store into a backup archive. For example, some log files or temporary installation directories may be excluded from being&nbsp;saved.</p><p>Doing this allows smaller archive files and faster backup process. However, it is important to bear in mind some limitations when working with exclusion lists: Image backup (directly bootable once restored) is not possible. Instead, all files rather than those in the exclusion lists are copied, but boot block is not saved inside the archive. Thus, the resulting image will not be bootable once it is restored in a real&nbsp;disk.</p><p>Overall recovery process is significantly slower and more complex due to boot block recovery (which is lost during the&nbsp;backup).</p><p>When restoring the file-system, follow the procedures explained in “Restore system disk from a non-image backup” and “Restore system disk from image backup” depending on whether or not an exclusion list was used or not&nbsp;respectively.</p><h1>4. Operations with backup archive&nbsp;files</h1><h2>4.1 Show files stored in a backup&nbsp;archive</h2><p>It is possible to show the list of files archived inside a backup save&nbsp;set.</p><p>This list can be optionally redirected to a file for future usage (<code>FILES.LIS</code> in the example), and details can also be expanded with <code>/FULL</code> qualifier.</p><div class=highlight><pre><span class=nb>&gt; </span>BACKUP /LIST[=FILES.LIS] BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET [/FULL]
+</pre></div><h2>4.2 Extract files from a backup&nbsp;archive</h2><p>In order to extract a file of directory from the archive, a selection (filespec) and destination must be specified as&nbsp;follows:</p><ul><li><p>Restoring a single&nbsp;file:</p><div class=highlight><pre><span class=nb>&gt; </span>BACKUP BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET /SELECT=index.dat dsa0:[stats]index.dat
+</pre></div></li><li><p>Restoring several&nbsp;files:</p><div class=highlight><pre><span class=nb>&gt; </span>BACKUP BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET /log /SELECT=[scripts]*.com dsa:[scripts]
+</pre></div></li><li><p>Restoring a full&nbsp;directory:</p><div class=highlight><pre><span class=nb>&gt; </span>BACKUP BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET /log /SELECT=[django...] dsa0:[django...]
+</pre></div></li><li><p>Restore files from a specific user (<span class=caps>UIC</span>):</p><div class=highlight><pre><span class=nb>&gt; </span>BACKUP BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET /log /BY_OWNER=[300,102] dsa0:[user2_files]
+</pre></div></li></ul><h2>4.3&nbsp;vmsbackup</h2><p>If the archive is residing in a Linux, Mac <span class=caps>OS</span>, Solaris or other Unix-like system, it is also possible to show and extract files from an archive with the <a href=http://labs.hoffmanlabs.com/node/817>vmsbackup</a>&nbsp;tool.</p><div class=highlight><pre><span class=gp>$</span> vmsbackup
+<span class=go>Usage: vmsbackup -{tx}[cdevwF][-b blocksize][-s setnumber][-f tapefile] </span>
+<span class=go>Version 4.4.3 </span>
+<span class=go>Reads and optionally unpacks OpenVMS BACKUP savesets</span>
+
+
+<span class=go>Available switches: </span>
+<span class=go> -b --blocksize Use specified blocksize </span>
+<span class=go> -B --binary Extract as binary files </span>
+<span class=go> -c --complete Retain complete filename </span>
+<span class=go> -d --directory Create subdirectories </span>
+<span class=go> -e --extension Extract all files </span>
+<span class=go> -f --file Read from file </span>
+<span class=go> -F --full Full detail in listing </span>
+<span class=go> -s --saveset Read saveset number </span>
+<span class=go> -t --list List files in saveset </span>
+<span class=go> -v --verbose List files as they are processed </span>
+<span class=go> -V --version Show program version number </span>
+<span class=go> -w --confirm Confirm files before restoring </span>
+<span class=go> -x --extract Extract files </span>
+<span class=go> -? --help Display this help message</span>
+</pre></div><p>Some examples of vmsbackup usage&nbsp;follow.</p><div class=highlight><pre><span class=gp>$</span> vmsbackup -tf archive.bck <span class=c># list files in an archive</span>
+<span class=go>Save set: ARCHIVE.BCK </span>
+<span class=go>Written by: SMSC </span>
+<span class=go>UIC: [000100,000001] </span>
+<span class=go>Date: 30-Jul-2013 20:07:53 </span>
+<span class=go>Command: BACKUP/LOG/IGNORE=INTERLOCK DSA2:[FILES...]*.* ARCHIVE.BCK /SAVE _SET</span>
+<span class=go>Operating system: OpenVMS I64 version V8.3 </span>
+<span class=go>BACKUP version: V8.3-1H1 </span>
+<span class=go>CPU ID register: 80000000 </span>
+<span class=go>Node name: _SMXXNN:: </span>
+<span class=go>Written on: _DSA0: </span>
+<span class=go>Block size: 32256 </span>
+<span class=go>Group size: 10 </span>
+<span class=go>Buffer count: 4353</span>
+
+
+<span class=go>[FILES]MY_LARGE_DB.DAT;2 432346347 19-Nov-2010 18:11:13 </span>
+<span class=go>[FILES]INFO.TXT;5 654 14-Jan-2011 11:21:04</span>
+<span class=go>[FILES]EDIT.EXE;1 15698 02-Feb-2013 17:54:23</span>
+
+
+<span class=gp>$</span> vmsbackup -tFf archive.bck info.txt <span class=c># show extended file information</span>
+<span class=go>Save set: ARCHIVE.BCK </span>
+<span class=go>[...]</span>
+
+
+<span class=go>[SYSMGR]INFO.TXT;1 </span>
+<span class=go>Size: 1/16 Created: 19-Nov-2010 18:11:13</span>
+<span class=go>Owner: [000001,000004] Revised: 19-Nov-2010 18:11:13 (3) </span>
+<span class=go>File ID: (3971,1,1) Expires: 01-Jan-1970 01:00:00 </span>
+<span class=go> Backup: 01-Jan-1970 01:00:00 </span>
+<span class=go>Protection: (S:RWED,O:RWED,G:RE,W:RE) </span>
+<span class=go>File Organization: Sequential </span>
+<span class=go>File attributes: Allocation 16, Extend 0 </span>
+<span class=go>Record format: Variable length, maximum 57 bytes </span>
+<span class=go>Record attributes: Carriage return carriage control</span>
+
+
+
+<span class=gp>$</span> vmsbackup -dxevf archive.bck  <span class=c># extract all files from an archive</span>
+
+
+<span class=gp>$</span> vmsbackup -Bdxvf archive.bck edit.exe <span class=c># extract binary (B) file from an archive</span>
+</pre></div><h2>4.4 <span class=caps>VMS</span> Backup reader&nbsp;(VMSBackup)</h2><p>There is an alternative to the vmsbackup tool that can run also on Windows platforms as well. Refer to <a href=http://labs.hoffmanlabs.com/node/817>hoffmanlabs</a> for further&nbsp;information.</p><div class=highlight><pre><span class=go>VMSBackup Version 1.5 Jul 31 2013</span>
+
+
+<span class=go>VMSBackup [FILE] [-L:listoption] [-N] [-X:extractmode] [-M:mask] [-F] [-V] [-D] [-?]</span>
+
+
+<span class=go>FILE Backup Data Set </span>
+<span class=go>-L Selects output list </span>
+<span class=go>listoptions S Suppress Output B Brief Output (default) </span>
+<span class=go>F Full Output C CSV Output </span>
+<span class=go>-N Don&#39;t Extract File Contents </span>
+<span class=go>-X Selects Extraction Mode </span>
+<span class=go>extractmode S Smart/Auto Mode (default) A ASCII Mode </span>
+<span class=go>B Binary Mode R Raw Mode </span>
+<span class=go>-M File Extraction Mask </span>
+<span class=go>e.g. *.*, *.bin;*, *a*.*;-1 etc. </span>
+<span class=go>Default is *.*;0. </span>
+<span class=go>-F Extract with full path (default off) </span>
+<span class=go>-V Extract with version numbers in the filename (default off) </span>
+<span class=go>-D Debug Mode (default off) </span>
+<span class=go>-DD Enhanced Debug Mode (default off) </span>
+<span class=go>-? Display this help</span>
+</pre></div><h1>5 - Restore the&nbsp;system</h1><h2>5.1 Restoring the system unit from a non-image&nbsp;backup</h2><p>The restoration process explained here will initialize the destination volume and remove all current contents. It is assumed that the system was boot from an emergency disk (or any other method like bootable <span class=caps>CD</span>/<span class=caps>DVD</span>), <span class=caps>SAN</span> disks are reachable and <span class=caps>SMSC</span> application is&nbsp;stopped.</p><p>As explained before (Exclude files from being backed up), when a list of files are excluded from the backup it is not possible to perform an image&nbsp;backup.</p><p>Image backup saves correctly the bootblock file (<span class=caps>GPT</span>.<span class=caps>SYS</span>) together with the other files. However for file-based backups the boot block is lost (this limitation has been fixed in newer versions of <span class=caps>BACKUP</span> for OpenVMS 8.4). In consequence once a file-based backup is restored into a disk, system cannot boot directly from it. If using a non-empty value for <code>BACKUP_EXCLUDELIST</code>, an additional step is required for the restoration&nbsp;process.</p><p><strong>If restoring from a full backup archive:</strong> - Destination volume must be initialized and&nbsp;mounted:</p><div class=highlight><pre>    :::factor
+    # Alpha:
+    SYSTEM&gt; INITIALIZE /NOHIGH /CLUSTER=16 /EXTENSION=256 DSA0: AXPVMSSYS
+    # Itanium:
+    SYSTEM&gt; INITIALIZE /NOHIGH /CLUSTER=64 /EXTENSION=256 DSA0: IA64VMSSYS
+
+    SYSTEM&gt; MOUNT /OVER=ID DSA0:
+</pre></div><ul><li><p>Dump the backup contents to the destination volume as&nbsp;follows:</p><div class=highlight><pre>SYSTEM&gt; BACKUP BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET /log dsa0:[000000...] /exclude=(gpt.sys,indexf.sys)
+</pre></div><p>Estimated completion time can be shown while pressing Ctrl-T any time during&nbsp;extraction.</p><div class=highlight><pre>Saveset volume:1, saveset block:21736 (32256 byte blocks)
+480.53MB decompressed out <span class=nb>of </span>26.68GB, 1% completed
+Decompress rate: 4.76MB/sec, estimated completion time: 18:24:39.52
+</pre></div></li></ul><p><strong>If restoring from an incremental backup</strong>, a restore from a full backup must be performed first, then the incremental backup(s) as&nbsp;follows:</p><ul><li><p>Dismount and remount the&nbsp;volume:</p><div class=highlight><pre>SYSTEM&gt; DISMOUNT DSA0:
+SYSTEM&gt; MOUNT /over=ID DSA0:
+</pre></div></li><li><p>Dump the incremental backups one by&nbsp;one:</p><div class=highlight><pre>SYSTEM&gt; BACKUP /INCREMENTAL BCK_DSK:[BACKUP]DELTA_18_JAN.SAV /SAVE_SET DSA0:
+SYSTEM&gt; BACKUP /INCREMENTAL BCK_DSK:[BACKUP]DELTA_25_JAN.SAV /SAVE_SET DSA0:
+ [...]
+</pre></div></li></ul><p>In order to <strong>restore the boot block</strong>, run the following&nbsp;command:</p><ul><li><p><strong>Alpha&nbsp;systems</strong></p><div class=highlight><pre>SYSTEM&gt; RUN SYS$SYSTEM:WRITEBOOT
+Update VAX portion <span class=nb>of </span>boot block (default is Y): N
+Update Alpha portion <span class=nb>of </span>boot block (default is Y): Y
+Enter Alpha boot file: dsa0:[VMS$COMMON.SYSEXE]APB.EXE
+Check <span class=nb>if </span>dsa0:[VMS$COMMON.SYSEXE]APB.EXE is contiguous by checking the <span class=nb>map </span>area as follows:
+SYSTEM&gt; DUMP/HEADER/BLOCK=END=0 dsa0:[VMS$COMMON.SYSEXE]APB.EXE
+[...]
+Map area 
+ Retrieval pointers
+
+        Count: <span class=m>1152 </span>LBN: <span class=m>8254864</span>
+</pre></div><p>If more than 1 retrieval pointer is shown, make the file contiguous as&nbsp;follows:</p><div class=highlight><pre>SYSTEM&gt; COPY /CONTIGUOUS dsa0:[VMS$COMMON.SYSEXE]APB.EXE.0 dsa0:[VMS$COMMON.SYSEXE]APB.EXE
+SYSTEM&gt; SET FILE dsa0:[VMS$COMMON.SYSEXE]APB.EXE /NOMOVE
+</pre></div></li><li><p><strong>Itanium&nbsp;systems</strong></p><p>This is usually not needed, since the <code>INITIALIZE</code> command will properly create the bootstrap on <code>GPT.SYS</code> file (which has 2 extends, one starting in sector 0 and the other in the last part of the unit; this may be checked with the <code>DUMP /HEADER/BLOCK=END=0</code> command).</p><div class=highlight><pre>SYSTEM&gt; SET BOOTBLOCK /PRESERVE=SIGNATURE /I64 DSA0:
+</pre></div></li></ul><p><strong>Check consistency of the system disk</strong>:</p><div class=highlight><pre><span class=nb>&gt; </span>mc dfu verify DSA0: /directory_scan /lock /fix /rebuild
+<span class=nb>or</span>
+<span class=nb>&gt; </span>analyze /disk_structure /repair
+</pre></div><p>Finally <strong>restore the <span class=caps>EFI</span> entries</strong> as explained in 6.2/6.3&nbsp;chapters.</p><h2>5.2 Restoring the system unit from an image&nbsp;backup</h2><p>Restore full image to disk will initialize the destination volume and remove all current contents. It is assumed that the system was booted from an emergency disk (or any other method like bootable <span class=caps>CD</span>/<span class=caps>DVD</span>), <span class=caps>SAN</span> disks are reachable and <span class=caps>SMSC</span> application is&nbsp;stopped.</p><p><strong>If restoring from a full image</strong>:</p><ul><li><p>Destination volume must be mounted&nbsp;foreign:</p><div class=highlight><pre>SYSTEM&gt; DISMOUNT /SYSTEM DSA0:
+SYSTEM&gt; MOUNT /FOREIGN DSA0:
+</pre></div></li><li><p>Dump the image contents to the destination volume as&nbsp;follows:</p><div class=highlight><pre>SYSTEM&gt; BACKUP /IMAGE BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET /log dsa0:
+Estimated completion time can be shown <span class=nb>while </span>pressing Ctrl-T any time during extraction.
+Saveset volume:1, saveset block:21736 (32256 byte blocks)
+480.53MB decompressed out <span class=nb>of </span>26.68GB, 1% completed
+Decompress rate: 4.76MB/sec, estimated completion time: 18:24:39.52
+</pre></div></li></ul><p><strong>If restoring from an incremental image</strong>, a restore from a full image must be performed first, then the incremental&nbsp;backup(s):</p><ul><li><p>Destination volume must be mounted&nbsp;foreign:</p><div class=highlight><pre>SYSTEM&gt; DISMOUNT DSA0:
+SYSTEM&gt; MOUNT /FOREIGN DSA0:
+</pre></div></li><li><p>Dump the image contents to the destination volume as&nbsp;follows:</p><div class=highlight><pre>SYSTEM&gt; BACKUP /IMAGE BCK_DSK:[BACKUP]SYSIMAGE.BCK /SAVE_SET /log dsa0:
+</pre></div></li><li><p>Dismount and remount the&nbsp;volume:</p><div class=highlight><pre>SYSTEM&gt; DISMOUNT DSA0:
+SYSTEM&gt; MOUNT /over=ID DSA0:
+</pre></div></li><li><p>Dump the incremental backups one by&nbsp;one:</p><div class=highlight><pre>SYSTEM&gt; BACKUP /INCREMENTAL BCK_DSK:[BACKUP]DELTA_18_JAN.SAV /SAVE_SET DSA0:
+SYSTEM&gt; BACKUP /INCREMENTAL BCK_DSK:[BACKUP]DELTA_25_JAN.SAV /SAVE_SET DSA0:
+ [...]
+</pre></div></li></ul><p><strong>Check consistency of the system disk</strong>:</p><div class=highlight><pre><span class=nb>&gt; </span>mc dfu verify DSA0: /directory_scan /lock /fix /rebuild
+<span class=nb>or</span>
+<span class=nb>&gt; </span>analyze /disk_structure /repair
+</pre></div><p>Finally <strong>restore the <span class=caps>EFI</span> entries</strong> as explained in 6.2/6.3&nbsp;chapters.</p><h2>5.3 Restoring the&nbsp;Database</h2><h3>5.3.1. Stop attached&nbsp;processes</h3><p>In order to restore the Database (<span class=caps>SDB</span>), it is needed that no users are attached to it. To check if there is any other process attached to the <span class=caps>SDB</span>, run the following&nbsp;commands:</p><ul><li><p>Oracle:</p><div class=highlight><pre>SYSTEM&gt; RMU/DUMP/USER db_sdb (should report: <span class=s>&quot;NO ACTIVE USERS&quot;</span>)
+</pre></div></li><li><p>Mimer:</p><div class=highlight><pre>SYSTEM&gt; mc sysman <span class=nb>set </span>environment /cluster
+SYSMAN&gt; DO MIMCONTROL /STATUS
+%SYSMAN-I-OUTPUT, command execution <span class=nb>on </span>node SYSTEM_1
+The server for database DB_SDB is Running
+New logins are Enabled
+Directory for SYSDB is SYSTEM_DB:[DB_SDB]
+Number <span class=nb>of </span>connections to server: <span class=m>2</span>
+[...]
+SYSMAN&gt; DO MIMCONTROL /STOP DB_SDB
+SYSMAN&gt; exit
+</pre></div></li></ul><h3>5.3.2. Restore <span class=caps>SDB</span> from a&nbsp;backup</h3><ul><li><p>Oracle:</p><div class=highlight><pre>SYSTEM&gt; show logical SMSC_DB_SDB
+<span class=s>&quot;SMSC_DB_SDB&quot;</span> <span class=nb>= </span><span class=s>&quot;SMSC_RDB:[SMSC_DB.SDB]SMSC_SDB.RDB&quot;</span> (LNM$SYSTEM_TABLE)
+SYSTEM&gt; RMU /RESTORE /NOCDD /LOG /NEW_VERSION <span class=nb>-</span>
+_SYSTEM&gt; /DIR=SMSC_RDB:[SMSC_DB.SDB] database_backup.rbf
+</pre></div></li><li><p>Mimer:</p><div class=highlight><pre>SYSTEM&gt; @sbr$root:[scripts]RCV_MIMER_RDB database_backup.bck
+</pre></div></li></ul><p>At this stage, services that make use of the database may be started&nbsp;back.</p><h1>6 -&nbsp;Troubleshooting</h1><h2>6.1 Emergency disk&nbsp;initialization</h2><p>This method installs a minimum OpenVMS Environment (install with no options) on a disk from which backup and restore operations can be performed for the system unit. The minimum OpenVMS Environment is created in the <code>[SYSE]</code> root on the disk, which runs a subset of OpenVMS and is indicated by the triple dollar sign (<code>$$$</code>) system prompt. For the examples below, assume that disk <code>DKA200:</code> will be initialized with minimum OpenVMS Environment (<em>emergency boot</em>&nbsp;disk).</p><p>The target disk must be mounted privately to your process (this prevents other users from accessing this disk during the installation and backup procedures). Therefore, if the target disk was mounted with the <code>/SYSTEM</code>, <code>/CLUSTER</code>, <code>/GROUP</code>, or <code>/SHARE</code> qualifier, dismount that disk and mount it without those qualifiers or the <code>/FOREIGN</code> qualifier. For&nbsp;example:</p><div class=highlight><pre>SYSTEM&gt; INITIALIZE /NOHIGH/cluster=64/extension=256/header=8000 DKA200: BCK_DSK
+SYSTEM&gt; MOUNT/OVERRIDE=IDENTIFICATION DKA200:
+</pre></div><ul><li><p>For OpenVMS I64, enter the following command (answer <strong><em><span class=caps>YES</span></em></strong> when asked to create the boot&nbsp;option):</p><div class=highlight><pre>SYSTEM&gt; @SYS$SYSTEM:I64VMS$PCSI_INSTALL_MIN.COM DKA200:
+</pre></div></li><li><p>For OpenVMS Alpha, enter the following&nbsp;command:</p><div class=highlight><pre>SYSTEM&gt; @SYS$SYSTEM:AXPVMS$PCSI_INSTALL_MIN.COM DKA200:
+</pre></div></li></ul><p>Refer to 1.1 for more information about the output of these&nbsp;commands.</p><p>Finally, copy the <span class=caps>ZIP</span> and <span class=caps>UNZIP</span> binaries to the emergency&nbsp;disk.</p><blockquote><p><strong><u>Note</u>:</strong>: doublecheck that the versions of <span class=caps>ZIP</span> and <span class=caps>UNZIP</span> are supported as explained in&nbsp;1.3.</p></blockquote><h1>6.2 Restoring <span class=caps>EFI</span> entries&nbsp;(Itanium)</h1><p>Once a system unit has been restored from a backup, <span class=caps>EFI</span> entries may not be correct and need to be fixed. Otherwise, automatic boot process will fail since the default entry has an incorrect value. In order to fix this, the following process must be&nbsp;followed:</p><div class=highlight><pre>SYSTEM&gt; @SYS$MANAGER:BOOT_OPTIONS
+
+
+ OpenVMS I64 Boot Manager Boot Options List Management Utility
+
+
+ (1) ADD an entry to the Boot Options list 
+ (2) DISPLAY the Boot Options list 
+ (3) REMOVE an entry from the Boot Options list 
+ (4) MOVE the position <span class=nb>of </span>an entry in the Boot Options list 
+ (5) VALIDATE boot options <span class=nb>and </span>fix them as necessary 
+ (6) Modify Boot Options TIMEOUT setting
+
+
+
+
+ (B) Set to operate <span class=nb>on </span>the Boot Device Options list 
+ (D) Set to operate <span class=nb>on </span>the Dump Device Options list 
+ (G) Set to operate <span class=nb>on </span>the Debug Device Options list
+
+
+ (E) EXIT from Boot Manager utility
+
+
+ You can also enter Ctrl-Y <span class=nb>at </span>any time to abort this utility.
+
+
+Enter your choice: <span class=m>5</span>
+
+
+To validate all entries in the Boot Options list, press Return. 
+To validate specific entries, enter the entry <span class=nb>number or </span>device name. 
+(Enter <span class=s>&quot;?&quot;</span> to display Boot Options list): &lt;RETURN&gt;
+Do you really want to validate all list entries? (Yes/No) Yes
+
+
+Enter your choice: E
+</pre></div><h2>6.3 Restoring boot entries&nbsp;(Alpha)</h2><p>On Alpha platforms, once the system unit has been restored from a backup, boot entries may not be correct and need to be fixed. The following lines show an example of restoring the default boot entries on an Alpha system from the <em>chevron</em> prompt (<code>&gt;&gt;&gt;</code>).</p><div class=highlight><pre><span class=go>P00&gt;&gt;&gt; init</span>
+<span class=go>Initializing...</span>
+<span class=go> [...]</span>
+<span class=go>P00&gt;&gt;&gt; show device</span>
+<span class=go>dga100.1001.0.8.1 $1$DGA100 HSG80 V87F Fibre disks </span>
+<span class=go>dga104.1001.0.8.1 $1$DGA104 HSG80 V87F </span>
+<span class=go>dgb100.1003.0.8.0 $1$DGA100 HSG80 V87F </span>
+<span class=go>dgb104.1003.0.8.0 $1$DGA104 HSG80 V87F </span>
+<span class=go>dkb400.4.0.106.0 DKB400 COMPAQ BD009635CB BDC4 SAS disks </span>
+<span class=go>dkb500.5.0.106.0 DKB500 COMPAQ BD009635CB BDC4 </span>
+<span class=go>dqa0.0.0.105.0 DQA0 CD-224E 9.5B 3.5&#39;&#39; drive </span>
+<span class=go>dva0.0.0.0.0 DVA0 CD/DVD drive </span>
+<span class=go>eia0.0.0.2005.1 EIA0 00-06-2B-00-C7-E6 Ethernet devices </span>
+<span class=go>eib0.0.0.3004.1 EIB0 00-08-02-61-91-62  </span>
+<span class=go>eic0.0.0.3005.1 EIC0 00-08-02-61-91-63 </span>
+<span class=go>eid0.0.0.2004.0 EID0 00-08-02-61-91-80 </span>
+<span class=go>eie0.0.0.2005.0 EIE0 00-08-02-61-91-81 </span>
+<span class=go>pga0.0.0.8.1 PGA0 WWN 1000-0000-c92c-c5f1 Fibre channels </span>
+<span class=go>pgb0.0.0.8.0 PGB0 WWN 1000-0000-c92c-d63d </span>
+<span class=go>pka0.7.0.6.0 PKA0 SCSI Bus ID 7 SCSI channels </span>
+<span class=go>pkb0.7.0.106.0 PKB0 SCSI Bus ID 7</span>
+
+<span class=go>P00&gt;&gt;&gt; wwidmgr -clear all</span>
+<span class=go>P00&gt;&gt;&gt; wwidmgr -quickset -udid 100</span>
+
+<span class=go>Disk assignment and reachability after next initialization:</span>
+
+<span class=go>6000-1fe1-001b-bee0-0009-2310-0258-0047</span>
+<span class=go>via adapter: via fc nport: connected: </span>
+<span class=go>dga100.1001.0.8.1 pga0.0.0.8.1 5000-1fe1-001b-bee1 No </span>
+<span class=go>dga100.1002.0.8.1 pga0.0.0.8.1 5000-1fe1-001b-bee4 Yes</span>
+<span class=go>dgb100.1003.0.8.0 pgb0.0.0.8.0 5000-1fe1-001b-bee2 No </span>
+<span class=go>dgb100.1004.0.8.0 pgb0.0.0.8.0 5000-1fe1-001b-bee3 Yes</span>
+
+<span class=go>P00&gt;&gt;&gt; wwidmgr -quickset -udid 104</span>
+
+<span class=go>Disk assignment and reachability after next initialization:</span>
+
+<span class=go>6000-1fe1-001b-bee0-0009-2300-0170-001f</span>
+<span class=go>via adapter: via fc nport: connected: </span>
+<span class=go>dga104.1001.0.8.1 pga0.0.0.8.1 5000-1fe1-001b-bee1 No </span>
+<span class=go>dga104.1002.0.8.1 pga0.0.0.8.1 5000-1fe1-001b-bee4 Yes</span>
+<span class=go>dgb104.1003.0.8.0 pgb0.0.0.8.0 5000-1fe1-001b-bee2 No </span>
+<span class=go>dgb104.1004.0.8.0 pgb0.0.0.8.0 5000-1fe1-001b-bee3 Yes</span>
+
+<span class=go>P00&gt;&gt;&gt; set mode diag</span>
+<span class=go>P00&gt;&gt;&gt; init</span>
+<span class=go>P00&gt;&gt;&gt; show device</span>
+<span class=go>[...output omitted...]</span>
+
+<span class=go>P00&gt;&gt;&gt; show bootdef_dev</span>
+<span class=go>bootdef_dev dga100.1002.0.8.1</span>
+
+<span class=go>P00&gt;&gt;&gt; set bootdef_dev dga100.1002.0.8.1, dgb100.1004.0.8.0, dga100.1001.0.8.1, dgb100.1003.0.8.0, dga104.1002.0.8.1, dgb104.1004.0.8.0, dga104.1001.0.8.1, dgb104.1003.0.8.0</span>
+</pre></div><p>The system will follow this order (boot from 1st bootstrap&nbsp;available).</p><div class=highlight><pre><span class=go>P00&gt;&gt;&gt; boot</span>
+</pre></div><h2>6.4 Add an <span class=caps>EFI</span> entry for the emergency disk&nbsp;(Itanium)</h2><p>When present, the <code>EFI</code> entry for booting from an emergency disk may be useful for the&nbsp;operator.</p><p>Using the same menu-driven application as explained above, add an entry for an emergency disk (i.e. <code>DKA200:</code>) installed in the current node. This unit must be mounted before running the script. Choose option (1) from the menu, then check with option&nbsp;(2).</p><div class=highlight><pre>SYSTEM&gt; @SYS$MANAGER:BOOT_OPTIONS
+
+
+ OpenVMS I64 Boot Manager Boot Options List Management Utility
+
+
+ (1) ADD an entry to the Boot Options list 
+ (2) DISPLAY the Boot Options list 
+ (3) REMOVE an entry from the Boot Options list 
+ (4) MOVE the position <span class=nb>of </span>an entry in the Boot Options list 
+ (5) VALIDATE boot options <span class=nb>and </span>fix them as necessary 
+ (6) Modify Boot Options TIMEOUT setting
+
+
+ (B) Set to operate <span class=nb>on </span>the Boot Device Options list 
+ (D) Set to operate <span class=nb>on </span>the Dump Device Options list 
+ (G) Set to operate <span class=nb>on </span>the Debug Device Options list
+
+
+ (E) EXIT from Boot Manager utility
+
+
+ You can also enter Ctrl-Y <span class=nb>at </span>any time to abort this utility.
+
+
+Enter your choice: <span class=m>1</span>
+Enter the device name (Enter <span class=s>&quot;?&quot;</span> for a list <span class=nb>of </span>devices): $1$DKA200: 
+Would you <span class=nb>like </span>to mount $1$DKA200: <span class=nb>? </span>(Yes/No) [YES] 
+Enter the desired position <span class=nb>number </span>(1,2,3,,,) <span class=nb>of </span>the entry. 
+To display the Boot Options list, enter <span class=s>&quot;?&quot;</span> <span class=nb>and </span>press Return. 
+Position [1]: <span class=m>3</span>
+
+
+Enter the value for VMS_FLAGS in the form n,n. 
+VMS_FLAGS [NONE]: e,0 
+Enter a <span class=nb>short </span>description (do <span class=nb>not </span>include quotation marks). 
+Description [&quot;$1$DKA200:&quot;]: EMERGENCY
+efi$bcfg: $1$dka200: (Boot0005) Option successfully added
+
+
+Enter your choice: <span class=m>2</span>
+
+
+To display all entries in the Boot Options list, press Return. 
+To display specific entries, enter the entry <span class=nb>number or </span>device name. 
+(Enter <span class=s>&quot;?&quot;</span> for a list <span class=nb>of </span>devices): &lt;RETURN&gt;
+
+
+EFI Boot Options list: Timeout <span class=nb>= </span><span class=m>10 </span>secs.
+
+
+Entry Description Options 
+----- ---------------------------------------------------------- ------------- 
+ <span class=m>1 </span>OpenVMS IA64 PKC0.5000-C500-2396-AD49 -fl <span class=m>0,0 </span>
+ $3$DGA10 PCI(0|7|0|0) Sas(5000C5002396AD49,Lun0) 
+ <span class=m>2 </span>EFI Shell [Built-in] 
+ VenHw(d65a6b8c-71e5-4df0-d2f009a9) 
+ <span class=m>3 </span>EMERGENCY PKA0.5000-C500-240F-5681 -fl e,0 
+ $1$DKA200 PCI(0|1|1|0) Sas(5000C500240F5681,Lun0) 
+ <span class=m>4 </span>Internal Bootable DVD -fl <span class=m>0,0 </span>
+ $1$DNA0 PCI(0|0|2|2) Usb(1,0) 
+-------------------------------------------------------------------------------- 
+<span class=m>5 </span>entries found.
+</pre></div><h2>6.5 Manually booting from an emergency&nbsp;disk</h2><p>Use the emergency system disk (on which the minimum OpenVMS environment was installed) to perform backup and restore operations as&nbsp;follows:</p><ul><li><p><strong>Alpha</strong></p><p>Halt the node, then from the chevron&nbsp;prompt:</p><div class=highlight><pre><span class=gp>&gt;</span>&gt;&gt; BOOT -FLAGS E,0 DKA200
+</pre></div></li><li><p><strong><span class=caps>IA64</span></strong></p><p>Reboot the node, then enter to the <span class=caps>EFI</span> shell once the boot entries menu is&nbsp;displayed.</p><p>Identify which is the emergency disk from the detected devices, then run the vms loader with flags <code>e,0</code> (emergency root, no&nbsp;cluster).</p><p>Local disks are tagged as <span class=caps>SAS</span> (Serial Attached <span class=caps>SCSI</span>) while units mounted from a disk controller appear as Fibre or <span class=caps>SCSI</span>.</p><div class=highlight><pre><span class=go>Shell&gt; reconnect -r</span>
+<span class=go>Shell&gt; map -r -fs</span>
+<span class=go>Shell&gt; vms_show device -fs</span>
+<span class=go>VMS: DKA0 COMPAQ BF1468B26B HPB9 V8_3 </span>
+<span class=go>EFI: fs0: Acpi(HWP0002,300,PNP0A03)/Pci(1|0)/Scsi(Pun0,Lun0)fs</span>
+<span class=go>VMS: DKC-1 HP DG072BB975 HPDC V8_3 </span>
+<span class=go>EFI: fs2: Acpi(HWP0002,400,PNP0A03)/Pci(1|0)/Sas(Addr5000C5000B9E4625)</span>
+<span class=go>VMS: DKD0 COMPAQ BF1468B26B HPB9 V8_3 </span>
+<span class=go>EFI: fs4: Acpi(HWP0002,700,PNP0A03)/Pci(1|0)/Scsi(Pun0,Lun0)</span>
+<span class=go> Shell&gt; fs2:\efi\vms\vms_loader.efi -flags e,0</span>
+</pre></div></li></ul><p>Refer to “OpenVMS upgrade and installation Manual, Appendix B.3: Overview of Using <span class=caps>EFI</span>” for more information on how to access the <span class=caps>EFI</span>&nbsp;shell.</p><h2>6.6 Backup archive&nbsp;attributes</h2><p>During backup archive transference, file attributes may be modified, especially when working with different Operative Systems (like push the backup to a <span class=caps>UNIX</span>&nbsp;server).</p><p>When <span class=caps>FTP</span> is used for the transference, backup and recovery of the attributes can be achieved when setting <code>/FDL</code> qualifier in OpenVMS&nbsp;client.</p><p>For <span class=caps>SFTP</span>, it is suggested to either archive the <code>.BCK</code> file into a <span class=caps>ZIP</span> file with &ldquo;-V&rdquo; flag set or use the <span class=caps>FDL</span> (File Definition Language) file to manually restore the original <span class=caps>RMS</span> properties of the backup archive. For the former, the <span class=caps>RMS</span> file attributes are stored in the zipped archive, and can be retained while deflating with unzip &ldquo;-V&rdquo;, thus <span class=caps>FDL</span> file is not&nbsp;needed.</p><p>Manual restoration may also be needed when not working with the script (i.e. transferring the file&nbsp;manually).</p><p>For restoring file attributes of the backup images&nbsp;do:</p><div class=highlight><pre>SYSTEM&gt; CONVERT /FDL=backup_archive.fdl transferred_backup.bck recovered_backup.bck
+</pre></div><p>If the backup file is damaged, there are some other ways to recover its&nbsp;contents: </p><div class=highlight><pre>SYSTEM&gt; BACKUP /list /save_set /repair backup_archive.bck
+</pre></div><p>Else&nbsp;try:</p><div class=highlight><pre>SYSTEM&gt; @RESET_BACKUP_SAVESET_ATTRIBUTES.COM backup_archive.bck
+</pre></div><blockquote><p>Refer to Appendix B for <code>RESET_BACKUP_SAVESET_ATTRIBUTES.COM</code> content.</p></blockquote><p>In various cases the following commands might&nbsp;work:</p><div class=highlight><pre>SYSTEM&gt; SET FILE/ATTRIBUTES=(RFM:FIX,MRS:32256,LRL:32256,RAT:NONE) SYSIMAGE.BCK
+SYSTEM&gt; SET FILE/ATTRIBUTES=(DEQ:0,RFM:VAR,MRS:32256,LRL:32256,RAT:NONE) SYSIMAGE.BCK
+</pre></div><p>For restoring file attributes of <span class=caps>RDB</span> backup&nbsp;do:</p><div class=highlight><pre>SYSTEM&gt; SET FILE/ATTRIB=(DEQ:2048,RFM:FIX,MRS:32256,RAT:NONE) *.rbf
+</pre></div><p>Refer to the “Guide to OpenVMS File Applications” for more information about <span class=caps>FDL</span>.</p><p>Besides this, the <span class=caps>ZIP</span> archive contains the backup operation command that was executed in the system as a&nbsp;comment.</p><p>The archive comment can be displayed with <code>unzip -z</code>.</p><h1>Appendix A - Script&nbsp;workflow</h1><p><a href=https://github.com/fernandezcuesta/smsctools/raw/master/Diagram.dia><img alt=Diagram src=images/diagram_bck.png></a></p><h1>Appendix B - Reset backup saveset attributes&nbsp;script</h1><p><span class=caps>DCL</span> script useful for resetting saveset file&nbsp;attributes.</p><div class=highlight><pre>$! RESET_BACKUP_SAVESET_ATTRIBUTES.COM
+$!
+$! P1  is the specification <span class=nb>of </span>the BACKUP saveset
+$!
+$! This procedure resets the record format <span class=nb>and </span>record
+$! <span class=nb>length </span>attributes <span class=nb>of </span>a BACKUP saveset -- savesets 
+$! can <span class=nb>get </span><span class=s>&quot;broken&quot;</span> during certain sorts <span class=nb>of </span>file
+$! transfers -- such as FTP.  This procedure reads the
+$! (undocumented) saveset record attributes directly
+$! out <span class=nb>of </span>the target file.
+$!
+$! First render the saveset readable, <span class=nb>and </span>implicitly
+$! check that the file exists.
+$!
+<span class=no>$ Set</span> File <span class=nb>-</span>
+    /Attributes=(RFM:FIX,MRS:512,LRL=512,ORG=SEQ,RAT=NONE) <span class=nb>-</span>
+    &#39;p1&#39;
+<span class=no>$</span>
+<span class=no>$</span> Open/Error=whoops/Read BckSaveset &#39;p1&#39;
+<span class=no>$ Read/Error=whoops/End=whoops</span> BckSaveset Record
+<span class=no>$ Close/Nolog</span> BckSaveset
+<span class=no>$</span>
+<span class=no>$!</span> Find the blocksize from within the record...
+<span class=no>$</span>
+<span class=no>$</span> BlockSize <span class=nb>= </span><span class=m>0</span>
+<span class=no>$ BBH_L_BLOCKSIZE</span> <span class=nb>= </span>%x28*8
+<span class=no>$ BlockSize</span> <span class=nb>= </span>F$CVUI(BBH_L_BLOCKSIZE, 32, Record)
+<span class=no>$ If</span> BlockSize .lt. <span class=m>2048 </span>.or. BlockSize .gt. <span class=m>65535</span>
+<span class=no>$ Then</span>
+<span class=no>$   Write</span> sys$output <span class=s>&quot;Unexpected block size&quot;</span>
+<span class=no>$   Goto</span> whoops
+<span class=no>$ Else</span>
+<span class=no>$   Set</span> File /Attributes=(RFM:FIX,LRL=&#39;BlockSize&#39;, <span class=nb>-</span>
+       MRS=&#39;BlockSize&#39;,RAT=none) <span class=nb>-</span>
+       &#39;p1&#39;
+<span class=no>$ endif</span>
+<span class=no>$ exit</span>
+$WHOOPS:
+<span class=no>$ Write</span> sys$output <span class=s>&quot;Error&quot;</span>
+<span class=no>$ exit</span>
+</pre></div><h1>Appendix C - Script configuration&nbsp;file</h1><p>Script configuration file&nbsp;example.</p><div class=highlight><pre><span class=k>[SYS_BACKUP_CFG]</span>
+
+<span class=c1># Configuration item: BACKUP_DIRECTORY. Format: Directory.</span>
+<span class=na>BACKUP_LOCATION</span> <span class=o>=</span> <span class=s>&quot;bck_dsk:[backup]&quot;</span>
+
+<span class=c1># Configuration item: BACKUP_EXCLUDELIST. Format: Filespec (Comma sep.)</span>
+<span class=c1># Directories must be specified as [DIRECTORY.NAME...]*</span>
+<span class=c1># If BACKUP_EXCLUDELIST is empty, Image backup will be performed</span>
+<span class=na>BACKUP_EXCLUDELIST</span> <span class=o>=</span> <span class=s>&quot;*.LOG,[GOLD.KITS...]*,*.PCSI*,*.ZIPEXE&quot;</span>
+
+<span class=c1># Configuration item: BACKUP_TIME</span>
+<span class=c1># Format: &quot;hh:mm&quot; time for the reschedule</span>
+<span class=na>BACKUP_TIME</span> <span class=o>=</span> <span class=s>&quot;02:00&quot;</span>
+
+<span class=c1># Configuration item: BACKUP_WDAY - day of the week for full backup</span>
+<span class=c1># Format: {Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday}</span>
+<span class=na>BACKUP_WDAY</span> <span class=o>=</span> <span class=s>&quot;Monday&quot;</span>
+
+<span class=c1># Configuration item: INCREMENTAL (Yes,[No])</span>
+<span class=c1># Incremental backups are done daily,</span>
+<span class=c1># otherwise weekly at Backup_wday:Backup_time</span>
+<span class=na>INCREMENTAL</span> <span class=o>=</span> <span class=s>&quot;NO&quot;</span>
+
+<span class=c1># Configuration item: RESCHEDULE (Yes,[No])</span>
+<span class=na>RESCHEDULE</span> <span class=o>=</span> <span class=s>&quot;YES&quot;</span>
+
+<span class=c1># Configuration item: SDB_FORCE (Yes,[No])</span>
+<span class=na>SDB_FORCE</span> <span class=o>=</span> <span class=s>&quot;YES&quot;</span>
+
+<span class=c1># Database name: SDB_NAME (default: smsc_db_sdb)</span>
+<span class=c1>#SDB_NAME = &quot;&quot;</span>
+
+<span class=c1># Configuration item: SDB_KEEPDAYS-&gt; SDB backups local store days ([30])</span>
+<span class=na>SDB_KEEPDAYS</span> <span class=o>=</span> <span class=s>30</span>
+
+<span class=c1># Configuration item: BACKUP_DAYS_KEEP_LOCAL_ARCHIVE</span>
+<span class=c1># Format: Integer</span>
+<span class=na>BACKUP_DAYS_KEEP_LOCAL_ARCHIVE</span> <span class=o>=</span> <span class=s>&quot;30&quot;</span>
+
+<span class=c1># Configuration item: ZIP_ARCHIVE (&quot;Always&quot;,[&quot;Skip&quot;])</span>
+<span class=na>ZIP_ARCHIVE</span> <span class=o>=</span> <span class=s>&quot;SKIP&quot;</span>
+<span class=c1>#</span>
+<span class=c1># Configuration item: BACKUP_LOG_DIR</span>
+<span class=na>BACKUP_LOG_DIR</span> <span class=o>=</span> <span class=s>&quot;bck_dsk:[BACKUP.LOG]&quot;</span>
+
+<span class=c1># Configuration item: FILE_TRANSFER {FTP, SFTP, PULL=None}</span>
+<span class=c1># SFTP assumes Public-key authentication</span>
+<span class=c1># Pull does not transfer the archive, just puts it into a ZIP file</span>
+<span class=na>FILE_TRANSFER</span> <span class=o>=</span> <span class=s>&quot;SFTP&quot;</span>
+
+<span class=k>[SYS_BACKUP_TX]</span>
+<span class=c1># Transference settings (for FILE_TRANSFER values rather than PULL)</span>
+<span class=c1>#</span>
+<span class=c1># Configuration item: BACKUP_REMOTE_DIRECTORY. Format: Directory</span>
+<span class=c1># Use &quot;.&quot; for current or default directory</span>
+<span class=na>BACKUP_REMOTE_DIRECTORY</span> <span class=o>=</span> <span class=s>&quot;.&quot;</span>
+
+<span class=c1># Configuration item: BACKUP_REM_NODE</span>
+<span class=c1># Format: IP address (&quot;n.n.n.n&quot;) or hostname</span>
+<span class=na>BACKUP_REM_NODE</span> <span class=o>=</span> <span class=s>&quot;ftp_san&quot;</span>
+
+<span class=c1># Configuration item: BACKUP_REM_USER</span>
+<span class=c1># Format: &quot;username password&quot;, or &quot;user&quot; for public-key authentication</span>
+<span class=na>BACKUP_REM_USER</span> <span class=o>=</span> <span class=s>&quot;bkpusr&quot;</span>
+
+<span class=c1># Configuration item: BACKUP_REMOTE_SYSTEM_TYPE</span>
+<span class=c1># Remote OS system {UNIX, VMS}</span>
+<span class=na>BACKUP_REMOTE_SYSTEM_TYPE</span> <span class=o>=</span> <span class=s>&quot;UNIX&quot;</span>
+
+<span class=c1># Configuration item: FILE_COUNT_FOR_TRANSFER</span>
+<span class=c1># Number of attempts to tranfer the file</span>
+<span class=na>FILE_COUNT_FOR_TRANSFER</span> <span class=o>=</span> <span class=s>3</span>
+
+<span class=c1># Configuration item: REMOTE_SFTP_COMMAND</span>
+<span class=c1># For SFTP, set up a command to be executed once the transfer is done</span>
+<span class=na>REMOTE_SFTP_COMMAND</span> <span class=o>=</span> <span class=s>&quot;sh cleanup.sh&quot;</span>
+</pre></div></section><div class=clear></div><div class=row><div class="col-xs-3 col-md-2 col-lg-2 archives izquierda"></div><div class="col-xs-8 col-md-9 col-lg-9 post archives"><a class=more href=javascript:javascript:history.go(-1)>&#8672;&nbsp;BACK&nbsp;&#8672;</a></div></div></div></div><div class=comments><div class="row post"><div class="col-xs-10 col-md-10 col-lg-10 comments_content comments_header"><h2>Leave your comments:</h2></div><div class="col-xs-2 col-md-2 col-lg-2 comments_corner"></div></div><div class="row flex-row"><div class="col-xs-10 col-md-10 col-lg-10 comments_content"><div id=disqus_thread><script type=text/javascript>
+                       var disqus_identifier = "openvms-system-disk-backup.html";
+                       (function() {
+                       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                       dsq.src = 'http://vt100.disqus.com/embed.js';
+                       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                      })();
+                    </script></div></div><div class=comments_side></div></div></div><div class=spacer></div><div class=clear></div></div><div class=row id=footer><div class=license_img><a rel=license href=http://creativecommons.org/licenses/by/4.0/><img alt="Creative Commons Attribution 4.0 International License" style=border-width:0 src=https://i.creativecommons.org/l/by/4.0/88x31.png></a></div><div class=license><div><span xmlns:dct=http://purl.org/dc/terms/ property=dct:title><strong>sys$notes</strong></span> is licensed under a <a rel=license href=http://creativecommons.org/licenses/by/4.0/>Creative Commons Attribution 4.0 International License</a></div><div><p>Powered by <a href=http://getpelican.com>Pelican</a>&nbsp;&middot;&nbsp;Calepin theme inspired by <a href=https://github.com/wrl/pelican-mockingbird>Mockingbird by Nevan Scott</a></p></div></div></div><div class=clear></div></div></body></html>
