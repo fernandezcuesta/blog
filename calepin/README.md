@@ -1,11 +1,11 @@
 #Calepin theme for Pelican 3.5.0
 
-Calepin is a notebook-like theme for (Pelican)[https://github.com/getpelican/pelican],
-inspired by (Mockingbird by Nevan Scott)[https://github.com/wrl/pelican-mockingbird]
-powered by (Bootstrap)[http://getbootstrap.com].
+Calepin is a notebook-like theme for [Pelican](https://github.com/getpelican/pelican),
+inspired by [Mockingbird by Nevan Scott](https://github.com/wrl/pelican-mockingbird)
+powered by [Bootstrap](http://getbootstrap.com).
 
 #Requirements
-- Pelican
+- [Pelican](https://github.com/getpelican/pelican)
 
 #Optional
 - Tipuesearch plugin
@@ -15,19 +15,20 @@ powered by (Bootstrap)[http://getbootstrap.com].
 Customizable items in `pelicanconf.py`:
 
 - SOCIAL_SQUARE_ICONS = True|False
-    When using a SOCIAL list of tuples (as described for `notmyidea` theme in
-    [pelican docs](http://docs.getpelican.com/en/latest/settings.html)) this
+
+    When using a `SOCIAL` list of tuples (as described for `notmyidea` theme
+    in [pelican docs](http://docs.getpelican.com/en/latest/settings.html)) this
     setting defines whether or not the icons are themed square or normal as
-    per (Font Awesome)[http://fortawesome.github.io/Font-Awesome/icons/].
+    per [Font Awesome](http://fortawesome.github.io/Font-Awesome/icons/).
 
 > The first element of the SOCIAL tuple **must** match the name of the icon
-> (see (Font Awesome)[http://fortawesome.github.io/Font-Awesome/icons/]).
+> (see [Font Awesome](http://fortawesome.github.io/Font-Awesome/icons/)).
 >
 > <u>Example:</u>
 >
-> SOCIAL = (('twitter', 'http://twitter.com/yourtwtrID'),
->          ('lastfm', 'http://lastfm.com/user/yourlastfmID'),
->          ('google-plus', 'https://plus.google.com/+yourGooglePlusID'))
+>     SOCIAL = (('twitter', 'http://twitter.com/yourtwtrID'),
+>               ('lastfm', 'http://lastfm.com/user/yourlastfmID'),
+>               ('google-plus', 'https://plus.google.com/+yourGooglePlusID'))
 
 - ABOUT_URL = 'http://a_valid_url_here'
     Meant to link towards an `about.me` page. Hidden if omitted.
