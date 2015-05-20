@@ -1,6 +1,5 @@
 cache/
 __pycache__/
-pelican*/
 *.pid
 *.tgz
 *~
