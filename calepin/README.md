@@ -24,34 +24,39 @@ Customizable items in `pelicanconf.py`:
 > The first element of the SOCIAL tuple **must** match the name of the icon
 > (see [Font Awesome](http://fortawesome.github.io/Font-Awesome/icons/)).
 >
-> <u>Example:</u>
+> **Example**:
 >
 >     SOCIAL = (('twitter', 'http://twitter.com/yourtwtrID'),
 >               ('lastfm', 'http://lastfm.com/user/yourlastfmID'),
 >               ('google-plus', 'https://plus.google.com/+yourGooglePlusID'))
 
-- ABOUT_URL = 'http://a_valid_url_here'
+- `ABOUT_URL` = 'http://a_valid_url_here'
+
     Meant to link towards an `about.me` page. Hidden if omitted.
 
-- DISQUS - If `DISQUS_SITENAME` is set, a post-it note like section is shown
-at the end of each article.
+- `DISQUS`
 
-- LICENSE - Set the license type in the footer.
+    If `DISQUS_SITENAME` is set, a post-it note like section is shown
+    at the end of each article.
 
-- USE_FAVICON = True|False
+- `LICENSE` - Set the license type in the footer.
+
+- `USE_FAVICON` = True|False
+
     Whether or not include a `favicon.ico` that should be placed under
     `theme/images`
 
-- SITELOGO - If found under `theme/images`, use this instead of the title
+- `SITELOGO` - If found under `theme/images`, use this instead of the title
 
-- PLUGINS
+- `PLUGINS`
+
    `tipue_search` - If enabled, a searchbox is set at the top right.
 
 #Screenshot
 
 ![screenshot](screenshot.png)
 
-Responsive mode:
+**Responsive mode:**
 
 ![screenshot](screenshot_responsive.png)
 
