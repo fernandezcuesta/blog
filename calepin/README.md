@@ -14,7 +14,7 @@ powered by [Bootstrap](http://getbootstrap.com).
 
 Customizable items in `pelicanconf.py`:
 
-- SOCIAL_SQUARE_ICONS = True|False
+- `SOCIAL_SQUARE_ICONS` = True|False
 
     When using a `SOCIAL` list of tuples (as described for `notmyidea` theme
     in [pelican docs](http://docs.getpelican.com/en/latest/settings.html)) this
