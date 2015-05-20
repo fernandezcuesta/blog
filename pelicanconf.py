@@ -48,7 +48,7 @@ DEFAULT_PAGINATION = 4
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
 
-THEME = 'custom-theme'
+THEME = 'calepin'
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['tipue_search', 'minify']
 
