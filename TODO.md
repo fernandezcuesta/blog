@@ -1,7 +1,7 @@
 ## TODO
 
 - Standardise pelican theme (pelican variables, refactor, CSS cleanup)
-- Fix theme (left column) when more >1 post for the same day are rendered
+~~- Fix theme (left column) when more >1 post for the same day are rendered~~
 - Automatically minify CSS
 - Fix duplicate tag detection
 - Replace custom codehilite patch with [pelican plugin](https://github.com/getpelican/pelican-plugins):
