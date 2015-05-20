@@ -85,7 +85,7 @@
 
                     <li {%- if output_file == "archives.html" %} class="selected"{% endif %}><a href="{{ SITEURL }}/archives.html">Archives</a></li>
                     {% if ABOUT_URL %}<li><a href="{{ ABOUT_URL }}">About</a></li>{% endif %}
-                    <li>{% for soc_item in SOCIAL %}<a class="social" href="{{ soc_item[1] }}"><i class="fa {{ soc_item[2] }} fa-2x" title="{{ soc_item[0] }}"></i></a>{% endfor %}</li>
+                    <li>{% for soc_item in SOCIAL %}<a class="social" href="{{ soc_item[1] }}"><i class="fa fa-{{ soc_item[0] }}{% if SOCIAL_SQUARE_ICONS %}-square{% endif %} fa-2x" title="{{ soc_item[0] }}"></i></a>{% endfor %}</li>
                 </ul>
 {%- block ephemeral_nav %}{%- endblock %}
 {% if 'tipue_search' in PLUGINS %}
