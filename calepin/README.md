@@ -1,7 +1,8 @@
 #Calepin theme for Pelican 3.5.0
 
 Calepin is a notebook-like theme for [Pelican](https://github.com/getpelican/pelican),
-powered by [Bootstrap](http://getbootstrap.com).
+powered by [Bootstrap](http://getbootstrap.com) and 
+[FontAwesome icons](http://fortawesome.github.io/Font-Awesome/).
 
 #Requirements
 - [Pelican](https://github.com/getpelican/pelican)
@@ -62,3 +63,4 @@ Customizable items in `pelicanconf.py`:
 #Live example
 
 Check [my blog](http://fernandezcuesta.github.io) for a live demo.
+
