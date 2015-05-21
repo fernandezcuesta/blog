@@ -1,6 +1,3 @@
-[submodule "fernandezcuesta.github.io"]
-	path = fernandezcuesta.github.io
-	url = git@github.com:fernandezcuesta/fernandezcuesta.github.io.git
 [submodule "pelican"]
 	path = pelican
 	url = git@github.com:fernandezcuesta/pelican.git
