@@ -1,7 +1,6 @@
 #Calepin theme for Pelican 3.5.0
 
 Calepin is a notebook-like theme for [Pelican](https://github.com/getpelican/pelican),
-inspired by [Mockingbird by Nevan Scott](https://github.com/wrl/pelican-mockingbird)
 powered by [Bootstrap](http://getbootstrap.com).
 
 #Requirements
