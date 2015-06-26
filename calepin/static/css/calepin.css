@@ -682,10 +682,6 @@ form.inline_edit {
 
 
 /* Scrollbars */
-::-moz-scrollbar {
-    width: 8px;
-    height: 8px;
-}
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -703,9 +699,6 @@ form.inline_edit {
 ::-webkit-scrollbar-track {
     -webkit-border-radius: 10px 1px;
 }
-::-moz-scrollbar-track {
-    -moz-border-radius: 10px 1px;
-}
 ::-o-scrollbar-track {
     -o-border-radius: 10px 1px;
 }
@@ -715,10 +708,6 @@ form.inline_edit {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    border-radius: 10px 1px;
-    background: #40a070; 
-}
-::-moz-scrollbar-thumb {
     border-radius: 10px 1px;
     background: #40a070; 
 }
@@ -732,9 +721,6 @@ form.inline_edit {
 }
 
 ::-webkit-scrollbar-thumb:window-inactive {
-	background: #777; 
-}
-::-moz-scrollbar-thumb:window-inactive {
 	background: #777; 
 }
 ::-o-scrollbar-thumb:window-inactive {

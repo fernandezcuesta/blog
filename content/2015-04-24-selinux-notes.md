@@ -177,9 +177,12 @@ default file contexts are defined in `/etc/selinux/contexts/files/file_contexts`
 
 <u>*Options:*</u>
 
-- `-o context`:    usually for removable media from non-SELinux systems (i.e. a FAT32 USB drive)
-- `-o fscontext`:  set or override the filesystem object instance security context (i.e. set ext3 filesystem security)
-- `-o defcontext`: set or override the default file security context (instead of default_t)
+- `-o context`:    usually for removable media from non-SELinux systems (i.e. a
+FAT32 formatted USB drive)
+- `-o fscontext`:  set or override the filesystem object instance security
+context (i.e. set ext3 filesystem security)
+- `-o defcontext`: set or override the default file security context (instead
+of `default_t`)
 
 If the same directory of an export has to be mounted with diferent contexts,
 use `-o nosharecache` option.
