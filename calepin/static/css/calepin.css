@@ -355,7 +355,7 @@ form.inline_edit {
 	padding: 4.5em 10px 10px 10px;
 }
 
-.fa {
+a .fa {
     padding: 2em 0 0 20px;
 }
 
@@ -729,3 +729,10 @@ form.inline_edit {
 ::scrollbar-thumb:window-inactive {
 	background: #777; 
 }
+.browserupgrade {
+    margin: 0.2em 0;
+    background: #a12;
+    color: #FFF;
+    padding: 0.2em 0;
+}
+
