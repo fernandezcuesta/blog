@@ -91,7 +91,7 @@ example `/etc/systemd/system/mountloop.service`:
     Description=Mount loop device
     DefaultDependencies=no
     Conflicts=umount.target
-    Before=local-fs.target umount.target
+    After=local-fs.target
 
 
     [Service]
