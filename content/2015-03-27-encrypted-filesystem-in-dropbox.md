@@ -40,7 +40,7 @@ i.e. `~/Dropbox/private.img`.
 
 For this to be shown as a device, we can do the following:
 
-###Option 1: using `/etc/rc.local`
+###Option 1: using `/etc/rc.local` systemd compatibility
 
     #!/bin/bash
     IMG_LOCATION=/home/user/Dropbox/private.img
