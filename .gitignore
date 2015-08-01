@@ -1,6 +1,8 @@
 cache/
 __pycache__/
 *.pid
+*.pyo
+*.pyc
 *.tgz
 *~
 share/
@@ -8,3 +10,5 @@ share/
 tmp/
 lib/
 bin/
+share/
+include/
