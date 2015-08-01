@@ -7,3 +7,4 @@ share/
 *.bak
 tmp/
 lib/
+bin/
