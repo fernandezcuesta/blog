@@ -167,7 +167,7 @@ authentication is allowed by the SSH client on configuration file
 Then identify the key that the client will use by doing:
 
     :::factor
-    SMSC> type smsc$root:[ssh2]identification.
+    > type smsc$root:[ssh2]identification.
     IdKey ID_DSA_2048_A
 
 If there are no IdKey entries, generate a new key pair with the following
@@ -175,8 +175,8 @@ command. Bear in mind that OpenVMS' secure shell is based on SSH2 and the key
 format differs from OpenSSH.
 
     :::factor
-    SMSC> ssh_keygen -P mykey
-    SMSC> set file /protection=(S,W,G,O:RW) mykey
+    > ssh_keygen -P mykey
+    > set file /protection=(S,W,G,O:RW) mykey
 
 Add the following entry to `IDENFITICATION.` file:
 
@@ -265,7 +265,7 @@ See Appendix C for the settings file content.
 ##3.2 Backup script
 
     :::factor
-    SMSC> @dsa0:[backup]sys_backup [NOW]
+    > @dsa0:[backup]sys_backup [NOW]
 
 If run without parameters, it will assume that the backup will be performed next
 `Backup_day` at `Backup_hour` and will not resubmit itself.
@@ -291,7 +291,7 @@ are customizable in the script, by default next Monday 02AM). If `p1` is set to
 For example:
    
     :::factor
-    SMSC> @dsa0:[backup]SYS_BACKUP Yes
+    > @dsa0:[backup]SYS_BACKUP Yes
 
 Another option is to configure the desired value in the configuration file.
 >Configuration item: RESCHEDULE (Yes,[No])
@@ -318,7 +318,7 @@ In that case, it will look for a valid value in the configuration file, or set
 the coded default value if not present.
 
     :::factor
-    SMSC> @dsa0:[backup]SYS_BACKUP default YES
+    > @dsa0:[backup]SYS_BACKUP default YES
 
 
 >Configuration item: INCREMENTAL (Yes,[No])
@@ -337,7 +337,7 @@ This can be achieved by specifying a third parameter:
 **Example:**
 
     :::factor
-    SMSC> @dsa0:[backup]SYS_BACKUP default default SFTP
+    > @dsa0:[backup]SYS_BACKUP default default SFTP
 
 ##3.6 Customized backup location
 
@@ -353,7 +353,7 @@ Then the backup will be performed in the specified directory. An example of
 specifying a destination folder follows:
 
     :::factor
-    SMSC> @dsa0:[backup]SYS_BACKUP default default default DSA1:[BACKUP.DSA0BCK]
+    > @dsa0:[backup]SYS_BACKUP default default default DSA1:[BACKUP.DSA0BCK]
 
 ##3.7 Exclude files from being backed up
 
