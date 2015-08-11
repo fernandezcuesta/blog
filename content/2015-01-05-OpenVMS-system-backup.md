@@ -167,7 +167,7 @@ authentication is allowed by the SSH client on configuration file
 Then identify the key that the client will use by doing:
 
     :::factor
-    > type smsc$root:[ssh2]identification.
+    > type sys$login:[ssh2]identification.
     IdKey ID_DSA_2048_A
 
 If there are no IdKey entries, generate a new key pair with the following
@@ -212,24 +212,22 @@ Otherwise, create a Backup directory which will store the RDB backup file.
 ##2.1 Perform a manual backup of the database
 
 You may skip this step if the subscriber database already resides in the system
-unit (`dsa0:`). This can be verified with the command:
+unit (`dsa0:`).
 
-    :::factor
-    SYSTEM> show logical SMSC_RDB
 
-Subscriber database can be backed up online (without service interruption)
+Databases can be backed up online (without service interruption)
 directly from the command line as follows. In this example, it will be saved on
 `dsa0:[backup]`.
 
 - **For Oracle RDB**:
 
         :::factor
-        SYSTEM> RMU /backup/online smsc_db_sdb dsa0:[backup]smsc_db.rbf
+        SYSTEM> RMU /backup/online db_logical_name dsa0:[backup]database_backup.rbf
 
 - **For Mimer DB**:
 
         :::factor
-        SYSTEM> @sbr$root:[scripts]bck_mimer_rdb dsa0:[backup]smsc_db.bck
+        SYSTEM> @sbr$root:[scripts]bck_mimer_rdb dsa0:[backup]database_backup.bck
 
 ##2.2 Perform a manual backup of the system unit
 
@@ -444,7 +442,7 @@ Some examples of vmsbackup usage follow.
     :::console
     $ vmsbackup -tf archive.bck # list files in an archive
     Save set: ARCHIVE.BCK 
-    Written by: SMSC 
+    Written by: USER 
     UIC: [000100,000001] 
     Date: 30-Jul-2013 20:07:53 
     Command: BACKUP/LOG/IGNORE=INTERLOCK DSA2:[FILES...]*.* ARCHIVE.BCK /SAVE _SET
@@ -521,8 +519,8 @@ for further information.
 The restoration process explained here will initialize the destination volume
 and remove all current contents.
 It is assumed that the system was boot from an emergency disk (or any other
-method like bootable CD/DVD), SAN disks are reachable and SMSC application is
-stopped.
+method like bootable CD/DVD), SAN disks are reachable and applications that
+may access the database or system files are stopped.
 
 As explained before (Exclude files from being backed up), when a list of files
 are excluded from the backup it is not possible to perform an image backup.
@@ -623,8 +621,8 @@ Finally **restore the EFI entries** as explained in 6.2/6.3 chapters.
 Restore full image to disk will initialize the destination volume and remove all
 current contents.
 It is assumed that the system was booted from an emergency disk (or any other
-method like bootable CD/DVD), SAN disks are reachable and SMSC application is
-stopped.
+method like bootable CD/DVD), SAN disks are reachable processes accessing either
+the database or system files are stopped.
 
 **If restoring from a full image**:
 
@@ -710,10 +708,8 @@ commands:
 - Oracle:
 
         :::factor
-        SYSTEM> show logical SMSC_DB_SDB
-        "SMSC_DB_SDB" = "SMSC_RDB:[SMSC_DB.SDB]SMSC_SDB.RDB" (LNM$SYSTEM_TABLE)
         SYSTEM> RMU /RESTORE /NOCDD /LOG /NEW_VERSION -
-        _SYSTEM> /DIR=SMSC_RDB:[SMSC_DB.SDB] database_backup.rbf
+        _SYSTEM> /DIR=DATABASE_DISK:[DATA] database_backup.rbf
 
 - Mimer:
 
@@ -1128,7 +1124,7 @@ Script configuration file example.
     # Configuration item: SDB_FORCE (Yes,[No])
     SDB_FORCE = "YES"
     
-    # Database name: SDB_NAME (default: smsc_db_sdb)
+    # Database name: SDB_NAME
     #SDB_NAME = ""
     
     # Configuration item: SDB_KEEPDAYS-> SDB backups local store days ([30])
