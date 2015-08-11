@@ -10,4 +10,8 @@ share/
 tmp/
 lib/
 bin/
+<<<<<<< HEAD
+=======
+share/
+>>>>>>> 7e73c2bd1ea5caedc9afe92e8457b02fe64a098a
 include/

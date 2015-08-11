@@ -1,4 +1,4 @@
-        <div class="row post">
+        <article class="row post">
             <div class="izquierda col-xs-2 col-md-2 col-lg-2">
             {% if first_article_of_day %}
              <div class="date">
@@ -11,7 +11,7 @@
                 {% endif %}
              </div>
             {% endif %}
-          
+
             {% if article.tags %}
                  <div class="tags"><ul>{% for t in article.tags %}
                      <li>
@@ -33,4 +33,4 @@
                 <a class="more" href="{{ SITEURL }}/{{ article.url }}">Read more&nbsp;&#8674;</a>
                 <div class="clear"></div>
             </div>
-        </div>
+        </article>
