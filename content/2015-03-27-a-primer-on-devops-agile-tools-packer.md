@@ -1,4 +1,4 @@
-Title: A primer on DevOps agile tools - packer.io
+Title: A primer on DevOps agile tools - packer
 Date: 2015-03-29
 tags: agile, linux, internet
 status: published

@@ -1,5 +1,5 @@
         <div class="row post">
-            <div class="izquierda col-xs-2 col-md-2 col-lg-2">
+            <aside class="izquierda col-xs-2 col-md-2 col-lg-2">
             {% if article.date.strftime('%y') <= CURRDATE.strftime('%y') %}
              <div class="date">
                 {% if article.date.strftime('%y') < CURRDATE.strftime('%y') %}
@@ -24,7 +24,7 @@
                      {%- endfor %}</ul>
                  </div>
              {%- endif %}
-            </div>
+            </aside>
             <div class="derecha{% if article.pinned %} pinned{% endif %} col-xs-10 col-md-10 col-lg-10">
                 {% if article['title'] -%}
                 <h1 class="title">

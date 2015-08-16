@@ -655,7 +655,7 @@ footer p { margin: 0; }
 }
 
 /* Responsive stuff */
-@media only screen and (max-width: @screen-xs-max) {
+@media only screen and (max-width: 767px) {
    body {font-size:80%;}
    h2 {margin-left: -0.6rem;}
    h3 {margin-left: -0.2rem;}
@@ -668,6 +668,8 @@ footer p { margin: 0; }
    .highlight{max-width:100%;padding-left:1px;}
    .license{width: -webkit-calc(99% - 100px);width: -moz-calc(100% - 100px);width: -o-calc(100% - 100px);width: calc(100% - 100px);}
    .fa{padding-top:2.2em;}
+   #nav{padding-left:0;}
+   #searchbox{position: fixed; top: 1vh; left:7vw; max-width:70%}
 }
 
 /* Text selection */

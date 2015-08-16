@@ -18,12 +18,12 @@
             {% set cmonth = article.date.date().replace(day=1) %}
             {%- if not month -%}
             {%   set month = cmonth %}
-            <div class="archives izquierda col-xs-3 col-md-2 col-lg-2">
+            <aside class="archives izquierda col-xs-3 col-md-2 col-lg-2">
                 <div class="date">
                  <div class="dateday">{{ article.date.strftime("%Y") }}</div>
                  <div class="datemonth">{{ article.date.strftime("%b") }}</div>
                 </div>
-            </div>
+            </aside>
             <div class="post archives col-xs-8 col-md-9 col-lg-9">
                 <ul>
             {%- elif cmonth < month -%}
@@ -31,12 +31,12 @@
                 </ul>
                 <br />
             </div>
-            <div class="archives izquierda col-xs-3 col-md-2 col-lg-2">
+            <aside class="archives izquierda col-xs-3 col-md-2 col-lg-2">
                 <div class="date">
                  <div class="dateday">{{ article.date.strftime("%Y") }}</div>
                  <div class="datemonth">{{ article.date.strftime("%b") }}</div>
                 </div>
-            </div>
+            </aside>
             <div class="post archives col-xs-8 col-md-9 col-lg-9">
                 <ul>
             {%- endif %}
