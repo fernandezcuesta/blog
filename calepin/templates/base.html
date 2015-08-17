@@ -21,14 +21,6 @@
 {%  if FEED_ALL_RSS %}
     <link href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate" title="{{ SITENAME }} RSS Feed" />
     {% endif %}
-<!-- Tipuesearch, Bootstrap and custom style -->
-{%   if 'tipue_search' in PLUGINS %}
-    <link href="{{ SITEURL}}/theme/tipuesearch/tipuesearch.css" rel="stylesheet">
-{% endif %}
-    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css"/>
-    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/calepin.css" type="text/css" />
-    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 {% block scripts %}
     <script async src="{{ SITEURL }}/theme/js/jquery.min.js"></script>
     <script async src="{{ SITEURL }}/theme/js/bootstrap.min.js"></script>
@@ -109,5 +101,13 @@
   </div>
 {% include 'analytics.html' %}
  </body>
+<!-- Tipuesearch, Bootstrap and custom style -->
+{%   if 'tipue_search' in PLUGINS %}
+    <link href="{{ SITEURL}}/theme/tipuesearch/tipuesearch.css" rel="stylesheet">
+{% endif %}
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/calepin.css" type="text/css" />
+    <link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <!-- Theme: calepin for Pelican -->
 </html>
