@@ -670,7 +670,7 @@ footer p { margin: 0; }
    .license{width: -webkit-calc(99% - 100px);width: -moz-calc(100% - 100px);width: -o-calc(100% - 100px);width: calc(100% - 100px);}
    .fa{padding-top:2.2em;}
    #nav{padding-left:0;}
-   #searchbox{position: fixed; top: 1vh; left:7vw; max-width:70%}
+   #searchbox{top: -50px; left:7vw; max-width:70%}
 }
 
 /* Text selection */
