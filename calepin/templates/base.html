@@ -33,7 +33,7 @@
   <!--[if lt IE 8]>
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
-  <nav class="navbar navbar-static-top" role="navigation">
+  <nav class="navbar navbar-static-top">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -77,8 +77,8 @@
 {%- block ephemeral_nav %}{%- endblock %}
 {% if 'tipue_search' in PLUGINS %}
           <div class="row navbar-header navbar-right" id="searchbox">
-            <form action="search.html" placeholder="search">
-              <input type="search" name="q" id="tipue_search_input" autocomplete="off" required>
+            <form action="search.html">
+              <input type="search" name="q" id="tipue_search_input" autocomplete="off" required placeholder="search">
             </form>
           </div>
 {% endif %}
