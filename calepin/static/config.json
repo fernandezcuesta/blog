@@ -393,12 +393,14 @@
     "pagination.less",
     "pager.less",
     "panels.less",
-    "close.less"
+    "close.less",
+    "component-animations.less",
+    "dropdowns.less"
   ],
   "js": [
     "dropdown.js",
     "collapse.js",
     "transition.js"
   ],
-  "customizerUrl": "http://getbootstrap.com/customize/?id=97ab9ea96a5a038c4341"
+  "customizerUrl": "http://getbootstrap.com/customize/?id=0b000ffb6b1aee6ee0aa"
 }
