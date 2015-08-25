@@ -7,3 +7,6 @@
 [submodule "fernandezcuesta.github.io"]
 	path = fernandezcuesta.github.io
 	url = git@github.com:fernandezcuesta/fernandezcuesta.github.io
+[submodule "calepin"]
+	path = calepin
+	url = https://github.com/fernandezcuesta/calepin.git
