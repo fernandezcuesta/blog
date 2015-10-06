@@ -11,6 +11,7 @@ htmlmin
 ipython
 pelican
 pelican-minify
+pelican-plugins
 python-dateutil
 pytz
 six
