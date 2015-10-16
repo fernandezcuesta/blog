@@ -1,9 +1,9 @@
-Title: Creating python virtualenvs
+Title: Creating python virtual environments
 Tags: python, agile
 Status: published
 Date: 2015-02-12 13:41:31
 
-Using **virtualenvs** while working on python projects helps in many ways:
+Using **virtualenv** while working on python projects helps in many ways:
 
 - Minimizes the risk of bad dependencies between different projects under
 development in the same machine
@@ -40,6 +40,7 @@ If using `ipython` as the interactive python interpreter, we can set a
 `postactivate` hook in `$WORKON_HOME` to load the correct version of
 `ipython`:
 
+    :::zsh hl_lines="12"
     #!/usr/bin/zsh
     # This hook is sourced after every virtualenv is activated.
     cd () {
@@ -89,7 +90,7 @@ explained [here](http://igotgenes.blogspot.com.es/2010/01/interactive-sandboxes-
     del site, environ, join, sys
 
 
-##Extra
+##Update
 
 If we have the <u>**powerline extension**</u> for `ipython`, we can invoke it
 directly before entering the virtualenv.
@@ -107,3 +108,42 @@ code will skip not use the powerline extension while within the virtualenv.
 This is usually the right thing because otherwise we should install
 `powerline-status in all our virtual environments.
 
+## Update (II)
+
+If using ST3 as text editor it may be convenient to add the following hook to
+`postmkvirtualenv`:
+
+    :::zsh hl_lines="5"
+    #!/usr/bin/zsh
+    # This hook is sourced after a new virtualenv is activated.
+    proj_name=$(basename $VIRTUAL_ENV)
+    mkdir $VIRTUAL_ENV/$proj_name
+    sed 's\$VIRTUAL_ENV\'$VIRTUAL_ENV'\g' $WORKON_HOME/skeleton.sublime-project >> $VIRTUAL_ENV/$proj_name.sublime-project
+    add2virtualenv $VIRTUAL_ENV/$proj_name
+
+so the template file (`skeleton.sublime-project`, see below) is copied with
+the appropriate name inside the newly created virtual environment.
+
+    :::json hl_lines="8 20"   
+    {
+            "build_systems":
+            [
+                    {
+                            "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+                            "name": "Anaconda Python Builder",
+                            "selector": "source.python",
+                            "shell_cmd": "$VIRTUAL_ENV/bin/python -u \"$file\""
+                    }
+            ],
+            "folders":
+            [
+                    {
+                "follow_symlinks": true,
+                            "path": "."
+                    }
+            ],
+            "settings":
+            {
+                    "python_interpreter": "$VIRTUAL_ENV/bin/python"
+            }
+    }
