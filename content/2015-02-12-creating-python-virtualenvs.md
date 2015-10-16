@@ -48,7 +48,7 @@ If using `ipython` as the interactive python interpreter, we can set a
         then
             builtin cd $VIRTUAL_ENV/$(basename $VIRTUAL_ENV)
         else
-            builtin cd "$@"/$(basename "$@")
+            builtin cd "$@"
         fi
     }
     cd
