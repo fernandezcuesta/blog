@@ -46,9 +46,9 @@ If using `ipython` as the interactive python interpreter, we can set a
     cd () {
         if (( $# == 0 ))
         then
-            builtin cd $VIRTUAL_ENV
+            builtin cd $VIRTUAL_ENV/$(basename $VIRTUAL_ENV)
         else
-            builtin cd "$@"
+            builtin cd "$@"/$(basename "$@")
         fi
     }
     cd
