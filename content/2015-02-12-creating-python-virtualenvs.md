@@ -117,7 +117,7 @@ If using ST3 as text editor it may be convenient to add the following hook to
     #!/usr/bin/zsh
     # This hook is sourced after a new virtualenv is activated.
     proj_name=$(basename $VIRTUAL_ENV)
-    mkdir $VIRTUAL_ENV/$proj_name
+    mkdir -p $VIRTUAL_ENV/$proj_name/$proj_name
     sed 's\$VIRTUAL_ENV\'$VIRTUAL_ENV'\g' $WORKON_HOME/skeleton.sublime-project >> $VIRTUAL_ENV/$proj_name.sublime-project
     add2virtualenv $VIRTUAL_ENV/$proj_name
 
