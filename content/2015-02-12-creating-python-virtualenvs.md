@@ -113,11 +113,10 @@ This is usually the right thing because otherwise we should install
 If using ST3 as text editor it may be convenient to add the following hook to
 `postmkvirtualenv`:
 
-    :::zsh hl_lines="5"
+    :::zsh hl_lines="4"
     #!/usr/bin/zsh
     # This hook is sourced after a new virtualenv is activated.
     proj_name=$(basename $VIRTUAL_ENV)
-    mkdir -p $VIRTUAL_ENV/$proj_name/$proj_name
     sed 's\$VIRTUAL_ENV\'$VIRTUAL_ENV'\g' $WORKON_HOME/skeleton.sublime-project >> $VIRTUAL_ENV/$proj_name.sublime-project
     add2virtualenv $VIRTUAL_ENV/$proj_name
 
@@ -147,3 +146,15 @@ the appropriate name inside the newly created virtual environment.
                     "python_interpreter": "$VIRTUAL_ENV/bin/python"
             }
     }
+
+For reference, other customized hook scripts:
+
+- `premkvirtualenv`
+
+        :::bash
+        mkdir -p $WORKON_HOME/$1/$1
+
+- `postdeactivate`
+
+        :::bash
+        cd $WORKON_HOME
