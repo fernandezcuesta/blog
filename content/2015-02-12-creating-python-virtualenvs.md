@@ -157,4 +157,5 @@ For reference, other customized hook scripts:
 - `postdeactivate`
 
         :::bash
+        unset -f cd
         cd $WORKON_HOME
