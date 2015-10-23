@@ -151,11 +151,13 @@ For reference, other customized hook scripts:
 
 - `premkvirtualenv`
 
-        :::bash
+        :::zsh
+        #!/usr/bin/zsh
         mkdir -p $WORKON_HOME/$1/$1
 
 - `postdeactivate`
 
-        :::bash
+        :::zsh
+        #!/usr/bin/zsh
         unset -f cd
         cd $WORKON_HOME
