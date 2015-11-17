@@ -161,3 +161,4 @@ For reference, other customized hook scripts:
         #!/usr/bin/zsh
         unset -f cd
         cd $WORKON_HOME
+        unalias ipython
