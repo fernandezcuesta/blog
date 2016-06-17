@@ -41,3 +41,10 @@ body{
 #knowledge .dates {
     padding: 0;
 }
+// required after HTML minimizing
+#tags{
+    word-break: break-all;
+}
+#tags > span{
+    margin: 1px;
+}

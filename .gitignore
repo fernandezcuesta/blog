@@ -11,3 +11,4 @@ tmp/
 lib/
 bin/
 include/
+*.github.io/
