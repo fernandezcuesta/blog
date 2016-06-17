@@ -17,10 +17,12 @@ SITENAME = 'sys$notes'
 SITESUBTITLE = 'yet another personal blog'
 SITEURL = 'http://fernandezcuesta.github.io'
 
-PATH = 'content'
 OUTPUT_PATH = 'fernandezcuesta.github.io/'
 DELETE_OUTPUT_DIRECTORY = False
-OUTPUT_RETENTION = [".git"]
+OUTPUT_RETENTION = ['.git']
+ARTICLE_PATHS = ['content']
+STATIC_PATHS = ('about', 'images')
+STATIC_EXCLUDE_SOURCES = True
 
 TIMEZONE = 'Europe/Madrid'
 GOOGLE_ANALYTICS = 'UA-56464775-1'
@@ -42,7 +44,7 @@ AUTHOR_FEED_RSS = None
 SOCIAL = (('google-plus', 'https://plus.google.com/+JMFernándezC'),
           ('github', 'https://github.com/fernandezcuesta/'))
 SOCIAL_SQUARE_ICONS = True
-ABOUT_URL = 'https://about.me/fernandez.cuesta'
+ABOUT_URL = 'about/cv_en.html'
 
 DEFAULT_PAGINATION = 4
 
