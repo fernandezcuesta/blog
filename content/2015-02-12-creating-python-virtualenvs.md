@@ -52,7 +52,7 @@ If using `ipython` as the interactive python interpreter, we can set a
         fi
     }
     cd
-    if [[ $(python --version 2>&1) == *2* ]]; then alias ipython=/usr/bin/ipython2; else alias ipython=/usr/bin/ipython3; fi
+    if [[ $(python --version 2>&1) =~ "$*\s2\.*" ]]; then alias ipython=/usr/bin/ipython2; else alias ipython=/usr/bin/ipython3; fi
 
 Plus the next snippet for running `ipython` inside virtual environments (under
 `~/.ipython/profile_default/startup/`, for example `50-run-inside-venv.py`) as
