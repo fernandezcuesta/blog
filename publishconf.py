@@ -15,10 +15,10 @@ CURRDATE = datetime.now()
 AUTHOR = 'J.M. Fernández'
 SITENAME = 'sys$notes'
 SITESUBTITLE = 'yet another personal blog'
-SITEURL = 'http://fernandezcuesta.github.io'
+SITEURL = 'http://fernandezcuesta.github.io/blog'
 
 PATH = 'content'
-OUTPUT_PATH = 'fernandezcuesta.github.io/'
+OUTPUT_PATH = 'fernandezcuesta.github.io/blog'
 DELETE_OUTPUT_DIRECTORY = False
 OUTPUT_RETENTION = [".git"]
 
